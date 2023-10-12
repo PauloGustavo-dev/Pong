@@ -1,6 +1,7 @@
 package cena;
 
 
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
@@ -10,16 +11,30 @@ public class Cena implements GLEventListener{
     private float xMin, xMax, yMin, yMax, zMin, zMax;
 
     public boolean play = false;
-    public float size = 50, extremidadeXBolinha = size/2, extremidadeYBolinha = size/2;
+    public float size = 50;
+    public float extremidadeXBolinha = size/2, extremidadeYBolinha = size/2;
     public float translacaoXBolinha=0, translacaoYBolinha=0;
     public float taxaAtualizacaoX =20, taxaAtualizacaoY =15;
+
+    public float movimentacaoBarra=0;
+    public float extremidadeXBarra = size*3, extremidadeYBarra = -900 + (size/2);
 
     public int vidas = 3;
 
 
     public int mode;
 
-    public void movimentarBolinha(GL2 gl){
+    public void movimentarBarra(){
+        //verifica a colisão da barra com a parede
+
+        if (movimentacaoBarra+extremidadeXBarra>=1000){
+            movimentacaoBarra = 1000 - extremidadeXBarra;
+        }else if(movimentacaoBarra-extremidadeXBarra<=-1000){
+            movimentacaoBarra = -1000 + extremidadeXBarra;
+        }
+    }
+
+    public void movimentarBolinha(){
         if (play && vidas!=0){
             translacaoYBolinha+= taxaAtualizacaoY;//inicia a movimentacao da bolinha no eixo y
             extremidadeYBolinha=translacaoYBolinha+(size/2);//armazena a extremidade Y com base na translacao e tamanho do objeto( /2 porque a bolinha é iniciada no centro da janela )
@@ -46,8 +61,6 @@ public class Cena implements GLEventListener{
                 extremidadeXBolinha= size/2;
                 taxaAtualizacaoX=20;
             }
-
-
         }
     }
 
@@ -78,11 +91,12 @@ public class Cena implements GLEventListener{
 
         gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, mode);
 
-        String m = mode == GL2.GL_LINE ? "LINE" : "FILL";
-
         //começar os desenhos
         bolinha(gl,glut);
-        movimentarBolinha(gl);
+        barra(gl,glut);
+
+        movimentarBolinha();
+        movimentarBarra();
 
         gl.glFlush();      
     }
@@ -93,6 +107,23 @@ public class Cena implements GLEventListener{
         gl.glColor3f(1,1,1);
         glut.glutSolidSphere(size,500,500);
         gl.glPopMatrix();
+    }
+
+    public void barra(GL2 gl, GLUT glut){
+        gl.glPushMatrix();
+        gl.glTranslatef(0,-900,0);
+        gl.glTranslatef(movimentacaoBarra,0,0);
+        float x = (float) -(size*2.5);
+        for (int i = 0; i < 6 ; i++) {
+            gl.glPushMatrix();
+            gl.glTranslatef(x,0,0);
+            gl.glColor3f(0,0,1);
+            glut.glutSolidCube(size);
+            gl.glPopMatrix();
+            x+=size;
+        }
+        gl.glPopMatrix();
+
     }
 
     @Override
