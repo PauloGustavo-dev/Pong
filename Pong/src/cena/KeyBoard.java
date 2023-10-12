@@ -29,6 +29,9 @@ public class KeyBoard implements KeyListener{
                 break;
             case 152://seta baixo
                 break;
+            case 32://barra de espaço
+                cena.play=true;
+                break;
         }
     }
 
