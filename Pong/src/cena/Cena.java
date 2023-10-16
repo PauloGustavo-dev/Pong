@@ -1,7 +1,6 @@
 package cena;
 
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
@@ -14,10 +13,11 @@ public class Cena implements GLEventListener{
     public float size = 50;
     public float extremidadeXBolinha = size/2, extremidadeYBolinha = size/2;
     public float translacaoXBolinha=0, translacaoYBolinha=0;
-    public float taxaAtualizacaoX =20, taxaAtualizacaoY =15;
+    public float taxaAtualizacaoX =35, taxaAtualizacaoY =15;
 
     public float movimentacaoBarra=0;
-    public float extremidadeXBarra = size*3, extremidadeYBarra = -900 + (size/2);
+    public float extremidadeDireitaBarra = size*3 , extremidadeEsquerdaBarra =extremidadeDireitaBarra -(size*6);
+    public float posicaoYbarra = -900 ;
 
     public int vidas = 3;
 
@@ -27,11 +27,30 @@ public class Cena implements GLEventListener{
     public void movimentarBarra(){
         //verifica a colisão da barra com a parede
 
-        if (movimentacaoBarra+extremidadeXBarra>=1000){
-            movimentacaoBarra = 1000 - extremidadeXBarra;
-        }else if(movimentacaoBarra-extremidadeXBarra<=-1000){
-            movimentacaoBarra = -1000 + extremidadeXBarra;
+        if (movimentacaoBarra+ size*3 >=1000){
+            movimentacaoBarra = 1000 - size*3;
+            extremidadeDireitaBarra = 1000;
+        }else if(movimentacaoBarra- size*3 <=-1000){
+            movimentacaoBarra = -1000 + size*3;
+            extremidadeDireitaBarra = -1000 + (size*6);
         }
+        System.out.println("xbola"+ extremidadeXBolinha);
+        System.out.println("xbarraaaaaaaa"+ extremidadeEsquerdaBarra);
+        System.out.println("xbarraaaaaaaa"+ extremidadeDireitaBarra);
+        //verifica colisao no eixo y
+        if (extremidadeYBolinha <= posicaoYbarra+(size/2) && extremidadeYBolinha >= posicaoYbarra-(size/2)){
+            System.out.println("pasouaqui");
+            if(extremidadeXBolinha >= extremidadeEsquerdaBarra && extremidadeXBolinha <= extremidadeDireitaBarra){
+                System.out.println("passou 2");
+                taxaAtualizacaoX =20;
+                taxaAtualizacaoY =15;
+            }
+        }
+        //if extremidadexbolinha <= extremidadexbarra && extremidadexbolinha >= -extremidadexbarra
+        //colisao realisada
+        //pontuacao ++
+        //taxaAtualizacaoX =20 taxaAtualizacaoY =15;
+
     }
 
     public void movimentarBolinha(){
@@ -41,7 +60,7 @@ public class Cena implements GLEventListener{
 
             translacaoXBolinha+= taxaAtualizacaoX;//inicia a movimentacao da bolinha no eixo X
             extremidadeXBolinha=translacaoXBolinha+(size/2);//armazena a extremidade X
-            System.out.println(extremidadeYBolinha);
+
             //verificar colisoes paredes
             if(extremidadeXBolinha>=1000){
                 taxaAtualizacaoX = -15;

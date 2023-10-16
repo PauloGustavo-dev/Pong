@@ -23,9 +23,13 @@ public class KeyBoard implements KeyListener{
         switch (e.getKeyCode()){
             case 149://seta direita
                 cena.movimentacaoBarra-= 40;
+                cena.extremidadeDireitaBarra -= 40;
+                cena.extremidadeEsquerdaBarra =cena.extremidadeDireitaBarra -(cena.size*6);
                 break;
             case 151://seta esquerda
                 cena.movimentacaoBarra+= 40;
+                cena.extremidadeDireitaBarra += 40;
+                cena.extremidadeEsquerdaBarra =cena.extremidadeDireitaBarra -(cena.size*6);
                 break;
 //            case 150://seta cima
 //                break;
