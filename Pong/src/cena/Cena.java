@@ -11,15 +11,17 @@ public class Cena implements GLEventListener{
 
     public boolean play = false;
     public float size = 50;
-    public float extremidadeXBolinha = size/2, extremidadeYBolinha = size/2;
+    public float extremidadeDireitaXBolinha = size/2, extremidadeEsquerdaXBolinha = -size/2;
+    public float extremidadeSuperiorYBolinha = size/2, extremidadeInferiorYBolinha = -size/2;
     public float translacaoXBolinha=0, translacaoYBolinha=0;
-    public float taxaAtualizacaoX =35, taxaAtualizacaoY =15;
+    public float taxaAtualizacaoX =20f , taxaAtualizacaoY =15f;
 
     public float movimentacaoBarra=0;
     public float extremidadeDireitaBarra = size*3 , extremidadeEsquerdaBarra =extremidadeDireitaBarra -(size*6);
     public float posicaoYbarra = -900 ;
 
     public int vidas = 3;
+    public int pontuacao = 0;
 
 
     public int mode;
@@ -34,16 +36,11 @@ public class Cena implements GLEventListener{
             movimentacaoBarra = -1000 + size*3;
             extremidadeDireitaBarra = -1000 + (size*6);
         }
-        System.out.println("xbola"+ extremidadeXBolinha);
-        System.out.println("xbarraaaaaaaa"+ extremidadeEsquerdaBarra);
-        System.out.println("xbarraaaaaaaa"+ extremidadeDireitaBarra);
         //verifica colisao no eixo y
-        if (extremidadeYBolinha <= posicaoYbarra+(size/2) && extremidadeYBolinha >= posicaoYbarra-(size/2)){
-            System.out.println("pasouaqui");
-            if(extremidadeXBolinha >= extremidadeEsquerdaBarra && extremidadeXBolinha <= extremidadeDireitaBarra){
-                System.out.println("passou 2");
-                taxaAtualizacaoX =20;
-                taxaAtualizacaoY =15;
+        if (extremidadeInferiorYBolinha <= posicaoYbarra+(size/2) && extremidadeInferiorYBolinha >= posicaoYbarra-(size/2)){
+            if(extremidadeDireitaXBolinha >= extremidadeEsquerdaBarra && extremidadeDireitaXBolinha <= extremidadeDireitaBarra){
+                taxaAtualizacaoY = - taxaAtualizacaoY;
+                pontuacao+=100;
             }
         }
         //if extremidadexbolinha <= extremidadexbarra && extremidadexbolinha >= -extremidadexbarra
@@ -56,29 +53,33 @@ public class Cena implements GLEventListener{
     public void movimentarBolinha(){
         if (play && vidas!=0){
             translacaoYBolinha+= taxaAtualizacaoY;//inicia a movimentacao da bolinha no eixo y
-            extremidadeYBolinha=translacaoYBolinha+(size/2);//armazena a extremidade Y com base na translacao e tamanho do objeto( /2 porque a bolinha é iniciada no centro da janela )
+            extremidadeSuperiorYBolinha =translacaoYBolinha+(size/2);//armazena a extremidade Y com base na translacao e tamanho do objeto( /2 porque a bolinha é iniciada no centro da janela )
+            extremidadeInferiorYBolinha =translacaoYBolinha-(size/2);
 
             translacaoXBolinha+= taxaAtualizacaoX;//inicia a movimentacao da bolinha no eixo X
-            extremidadeXBolinha=translacaoXBolinha+(size/2);//armazena a extremidade X
+            extremidadeDireitaXBolinha =translacaoXBolinha+(size/2);//armazena a extremidade X
+            extremidadeEsquerdaXBolinha= translacaoXBolinha-(size/2);
 
             //verificar colisoes paredes
-            if(extremidadeXBolinha>=1000){
-                taxaAtualizacaoX = -15;
-            } else if(extremidadeXBolinha<=-1000){
-                taxaAtualizacaoX = 15;
+            if(extremidadeDireitaXBolinha >=1000){
+                taxaAtualizacaoX = - taxaAtualizacaoX;
+            } else if(extremidadeEsquerdaXBolinha <=-1000){
+                taxaAtualizacaoX = - taxaAtualizacaoX;
             }
             //verifica colisões teto/chão
-            if(extremidadeYBolinha>=1000){
+            if(extremidadeSuperiorYBolinha >=1000){
                 taxaAtualizacaoY = -15;
-            }else if(extremidadeYBolinha<=-1000){
+            }else if(extremidadeInferiorYBolinha <=-1000){
                 vidas-=1;
+                //resetando valores iniciaais
                 translacaoYBolinha= 0;
-                extremidadeYBolinha= size/2;
+                extremidadeSuperiorYBolinha = size/2;
+                extremidadeInferiorYBolinha = -size/2;
                 taxaAtualizacaoY=15;
 
                 translacaoXBolinha= 0;
-                extremidadeXBolinha= size/2;
-                taxaAtualizacaoX=20;
+                extremidadeDireitaXBolinha = size/2;
+
             }
         }
     }
