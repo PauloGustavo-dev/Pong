@@ -22,16 +22,70 @@ public class Cena implements GLEventListener{
     public float extremidadeDireitaBarra = size*3 , extremidadeEsquerdaBarra =extremidadeDireitaBarra -(size*6);
     public float posicaoYbarra = -900 ;
 
-    public int vidas = 3;
+    public final float tamanhoInicialObstaculo = 100;
+    public float tamanhoObstaculo =100;
+
+    public int vidas = 5;
     public int pontuacao = 0;
     public int fase= 1;
 
 
     public int mode;
+    public void colisaoObstaculo(){
+        if(extremidadeDireitaXBolinha >= -tamanhoObstaculo/2 && extremidadeDireitaXBolinha <= tamanhoObstaculo/2){
+            if (extremidadeInferiorYBolinha <= tamanhoObstaculo/2 && extremidadeInferiorYBolinha >= (tamanhoObstaculo/2) - 20)// parte superior + margem de erro
+            {
+                //taxa crescente, eixo y
+                taxaAtualizacaoY = velocidadeInicialY + (5 * (fase-1));
+
+                Random ran = new Random();
+                int aleatorizaAcressimoX = ran.nextInt(11);
+                if (taxaAtualizacaoX<0){
+                    taxaAtualizacaoX = -velocidadeInicialX - (5 * (fase-1));//pode aumentar velocidade a depender da fase
+                    taxaAtualizacaoX -= aleatorizaAcressimoX;
+                } else {
+                    taxaAtualizacaoX = velocidadeInicialX + (5 * (fase - 1));//pode aumentar velocidade a depender da fase
+                    taxaAtualizacaoX += aleatorizaAcressimoX;
+                }
+            } else if (extremidadeSuperiorYBolinha <= -tamanhoObstaculo/2 && extremidadeSuperiorYBolinha >= -((tamanhoObstaculo/2) + 20))// parte inferior + margem de erro
+            {
+                //taxa decrescente, eixo y
+                taxaAtualizacaoY = -velocidadeInicialY - (5 * (fase-1));
+
+                Random ran = new Random();
+                int aleatorizaAcressimoX = ran.nextInt(11);
+                if (taxaAtualizacaoX<0){
+                    taxaAtualizacaoX = -velocidadeInicialX - (5 * (fase-1));//pode aumentar velocidade a depender da fase
+                    taxaAtualizacaoX -= aleatorizaAcressimoX;
+                } else {
+                    taxaAtualizacaoX = velocidadeInicialX + (5 * (fase - 1));//pode aumentar velocidade a depender da fase
+                    taxaAtualizacaoX += aleatorizaAcressimoX;
+                }
+            } else if (extremidadeInferiorYBolinha <= tamanhoObstaculo/2 && extremidadeInferiorYBolinha >= -tamanhoObstaculo/2)
+            {
+                // eixo y
+                if (taxaAtualizacaoY<= 0){
+                    taxaAtualizacaoY = -velocidadeInicialY - (5 * (fase-1));
+                } else {
+                    taxaAtualizacaoY = velocidadeInicialY + (5 * (fase - 1));
+                }
+                Random ran = new Random();
+                int aleatorizaAcressimoX = ran.nextInt(11);
+                //se bater na lateral a bolinha vai para o lado oposto em relação ao eixo x
+                if (taxaAtualizacaoX < 0){
+                    taxaAtualizacaoX = velocidadeInicialX + (5 * (fase-1) );//pode aumentar velocidade a depender da fase
+                    taxaAtualizacaoX += aleatorizaAcressimoX;
+                } else {
+                    taxaAtualizacaoX = -velocidadeInicialX - (5 * (fase - 1));//pode aumentar velocidade a depender da fase
+                    taxaAtualizacaoX -= aleatorizaAcressimoX;
+                }
+            }
+        }
+    }
 
     public void movimentarBarra(){
         //verifica a colisão da barra com a parede
-        System.out.println(taxaAtualizacaoX);
+        System.out.println(taxaAtualizacaoY);
 
 
         if (movimentacaoBarra+ size*3 >= extremidadeJanela){
@@ -46,9 +100,9 @@ public class Cena implements GLEventListener{
         {
             //verificar colisão com a parte superior da barrra
             if(extremidadeDireitaXBolinha >= extremidadeEsquerdaBarra && extremidadeDireitaXBolinha <= extremidadeDireitaBarra){
-                pontuacao+=100;
+                pontuacao+=50;
 
-                fase = (pontuacao/300)+1;
+                fase = (pontuacao/200)+1;
 
                 //taxa crescente, eixo y
                 taxaAtualizacaoY = velocidadeInicialY + (5 * (fase-1));
@@ -68,9 +122,10 @@ public class Cena implements GLEventListener{
             //verificar colisão com a parte lateral da barrra
             if(extremidadeDireitaXBolinha >= extremidadeEsquerdaBarra && extremidadeDireitaXBolinha <= extremidadeDireitaBarra)
              {
-                pontuacao+=100;
+                pontuacao+=50;
 
-                fase = (pontuacao/300)+1;
+                fase = (pontuacao/200)+1;
+
                 //taxa crescente, eixo y
                 taxaAtualizacaoY = velocidadeInicialY + (5 * (fase-1));
 
@@ -151,11 +206,19 @@ public class Cena implements GLEventListener{
         gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, mode);
 
         //começar os desenhos
-        bolinha(gl,glut);
-        barra(gl,glut);
-
+        if (vidas!= 0){
+            bolinha(gl,glut);
+        }
         movimentarBolinha();
+
+        barra(gl,glut);
         movimentarBarra();
+
+        if (fase >= 2){
+            obstaculo(gl,glut);
+            colisaoObstaculo();
+        }
+
 
         gl.glFlush();
     }
@@ -181,6 +244,15 @@ public class Cena implements GLEventListener{
             gl.glPopMatrix();
             x+=size;
         }
+        gl.glPopMatrix();
+
+    }
+
+    public void obstaculo(GL2 gl, GLUT glut){
+        gl.glPushMatrix();
+        gl.glColor3f(1,1,1);
+        tamanhoObstaculo = tamanhoInicialObstaculo + (20 * (fase-1));
+        glut.glutSolidSphere(tamanhoObstaculo/2,(int)tamanhoObstaculo,(int)tamanhoObstaculo);
         gl.glPopMatrix();
 
     }
