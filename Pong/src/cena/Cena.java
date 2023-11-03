@@ -1,34 +1,38 @@
 package cena;
 
 
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.util.gl2.GLUT;
+import com.jogamp.opengl.util.awt.TextRenderer;
 import java.util.Random;
+import java.awt.Color;
+import java.awt.Font;
+
 public class Cena implements GLEventListener{
     private float xMin, xMax, yMin, yMax, zMin, zMax;
     public final float extremidadeJanela = 1000f;
-
-    public boolean play = false;
     public float size = 50;
+    private TextRenderer textRenderer;
     public float extremidadeDireitaXBolinha = size/2, extremidadeEsquerdaXBolinha = -size/2;
     public float extremidadeSuperiorYBolinha = size/2, extremidadeInferiorYBolinha = -size/2;
     public float translacaoXBolinha=0, translacaoYBolinha=0;
     public final float velocidadeInicialX = 20f, velocidadeInicialY = 15f;
     public float taxaAtualizacaoX =20f , taxaAtualizacaoY =15f;
-
     public float movimentacaoBarra=0;
     public float extremidadeDireitaBarra = size*3 , extremidadeEsquerdaBarra =extremidadeDireitaBarra -(size*6);
     public float posicaoYbarra = -900 ;
-
     public final float tamanhoInicialObstaculo = 100;
     public float tamanhoObstaculo =100;
-
     public int vidas = 5;
     public int pontuacao = 0;
     public int fase= 1;
 
+    public boolean menuPrincipalAtivado = true;
+    public boolean jogoIniciado = false;
+    public boolean menuPausaAtivado = false;
 
     public int mode;
     public void colisaoObstaculo(){
@@ -144,7 +148,7 @@ public class Cena implements GLEventListener{
     }
 
     public void movimentarBolinha(){
-        if (play && vidas!=0){
+        if (jogoIniciado && vidas!=0){
             translacaoYBolinha+= taxaAtualizacaoY;//inicia a movimentacao da bolinha no eixo y
             extremidadeSuperiorYBolinha =translacaoYBolinha+(size/2);//armazena a extremidade Y com base na translacao e tamanho do objeto( /2 porque a bolinha é iniciada no centro da janela )
             extremidadeInferiorYBolinha =translacaoYBolinha-(size/2);
@@ -154,15 +158,15 @@ public class Cena implements GLEventListener{
             extremidadeEsquerdaXBolinha= translacaoXBolinha-(size/2);
 
             //verificar colisoes paredes
-            if(extremidadeDireitaXBolinha >= extremidadeJanela){
+            if(extremidadeDireitaXBolinha >= extremidadeJanela ){
                 taxaAtualizacaoX = - taxaAtualizacaoX;
-            } else if(extremidadeEsquerdaXBolinha <= - extremidadeJanela){
+            } else if(extremidadeEsquerdaXBolinha <= (-extremidadeJanela)){
                 taxaAtualizacaoX = - taxaAtualizacaoX;
             }
             //verifica colisões teto/chão
             if(extremidadeSuperiorYBolinha >= extremidadeJanela){
                 taxaAtualizacaoY = - taxaAtualizacaoY;
-            }else if(extremidadeInferiorYBolinha <= - extremidadeJanela){
+            }else if(extremidadeInferiorYBolinha <= - extremidadeJanela ){
                 vidas-=1;
                 //resetando valores iniciaais
                 translacaoYBolinha = 0;
@@ -173,25 +177,28 @@ public class Cena implements GLEventListener{
                 translacaoXBolinha = 0;
                 extremidadeDireitaXBolinha = size / 2;
             }
-
-
         }
     }
-
-
     @Override
     public void init(GLAutoDrawable drawable) {
         //dados iniciais da cena        
         GL2 gl = drawable.getGL().getGL2();
         //Estabelece as coordenadas do SRU (Sistema de Referencia do Universo)
-        xMin = yMin = zMin = -extremidadeJanela;
-        xMax = yMax = zMax = extremidadeJanela;
+//        xMin = yMin = zMin = -extremidadeJanela;
+//        xMax = yMax = zMax = extremidadeJanela;
+        xMin = -Renderer.screenWidth;
+        xMax = Renderer.screenWidth;
+        yMin = -Renderer.screenHeight;
+        yMax = Renderer.screenHeight;
+        zMin = -extremidadeJanela;
+        zMax = extremidadeJanela;
 
+        //configurações de texto
+        textRenderer = new TextRenderer(new Font("Serif", Font.BOLD, 30));
 
         //Habilita o buffer de profundidade
         gl.glEnable(GL2.GL_DEPTH_TEST);
     }
-
 
     @Override
     public void display(GLAutoDrawable drawable) {
@@ -205,22 +212,41 @@ public class Cena implements GLEventListener{
 
         gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, mode);
 
-        //começar os desenhos
-        if (vidas!= 0){
-            bolinha(gl,glut);
+
+        if (menuPrincipalAtivado){
+            gerarTexto(gl, 450, 750, Color.white ,"PONG");
+            gerarTexto(gl, 275, 250, Color.white ,"Aperte espaço para começar o jogo");
+        } else if (jogoIniciado) {//começar os desenhos
+            bordas(gl,glut);
+            if (vidas!= 0){ bolinha(gl,glut); }
+            movimentarBolinha();
+
+            barra(gl,glut);
+            movimentarBarra();
+
+            if (fase >= 2){
+                obstaculo(gl,glut);
+                colisaoObstaculo();
+            }
+        } else if (menuPausaAtivado) {
+            gerarTexto(gl, 450, 500, Color.white ,"PAUSE");
+            gerarTexto(gl, 275, 250, Color.white ,"Aperte espaço para voltar ao jogo");
         }
-        movimentarBolinha();
-
-        barra(gl,glut);
-        movimentarBarra();
-
-        if (fase >= 2){
-            obstaculo(gl,glut);
-            colisaoObstaculo();
-        }
-
-
         gl.glFlush();
+    }
+
+    public void bordas(GL2 gl, GLUT glut){
+        gl.glPushMatrix();
+        gl.glColor3f(1,1,1);
+        gl.glLineWidth(100f);
+        gl.glBegin(GL.GL_LINE_LOOP);
+            gl.glVertex2f(-1000,1000);
+            gl.glVertex2f(1000,1000);
+            gl.glVertex2f(1000,-1000);
+            gl.glVertex2f(-1000,-1000);
+            gl.glVertex2f(-1000,1000);
+        gl.glEnd();
+        gl.glPopMatrix();
     }
     public void bolinha(GL2 gl,GLUT glut){
         gl.glPushMatrix();
@@ -245,7 +271,6 @@ public class Cena implements GLEventListener{
             x+=size;
         }
         gl.glPopMatrix();
-
     }
 
     public void obstaculo(GL2 gl, GLUT glut){
@@ -254,7 +279,16 @@ public class Cena implements GLEventListener{
         tamanhoObstaculo = tamanhoInicialObstaculo + (20 * (fase-1));
         glut.glutSolidSphere(tamanhoObstaculo/2,(int)tamanhoObstaculo,(int)tamanhoObstaculo);
         gl.glPopMatrix();
+    }
 
+    public void gerarTexto(GL2 gl, int xPosicao, int yPosicao, Color cor, String texto){
+        gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
+        //Retorna a largura e altura da janela
+        textRenderer.beginRendering(1000, 1000);
+        textRenderer.setColor(cor);
+        textRenderer.draw(texto, xPosicao, yPosicao);
+        textRenderer.endRendering();
+        gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, mode);
     }
 
     @Override

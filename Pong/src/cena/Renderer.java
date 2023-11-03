@@ -7,10 +7,13 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.FPSAnimator;
 
+import java.awt.*;
+
 public class Renderer {
+    public static Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
     private static GLWindow window = null;
-    public static int screenWidth = 900;
-    public static int screenHeight = 900;
+    public static int screenWidth = (int)size.getWidth();
+    public static int screenHeight = (int)size.getHeight();
 
     //Cria a janela de rendeziracao do JOGL
     public static void init(){        
@@ -19,7 +22,8 @@ public class Renderer {
         GLCapabilities caps = new GLCapabilities(profile);        
         window = GLWindow.create(caps);
         window.setSize(screenWidth, screenHeight);
-        //window.setResizable(false);
+        window.setTitle("Pong");
+        window.setFullscreen(true);
         
         Cena cena = new Cena();
         

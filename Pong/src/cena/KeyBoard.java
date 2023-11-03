@@ -36,7 +36,9 @@ public class KeyBoard implements KeyListener{
 //            case 152://seta baixo
 //                break;
             case 32://barra de espaço
-                cena.play=true;
+                cena.jogoIniciado=!cena.jogoIniciado;
+                cena.menuPrincipalAtivado=false;
+                cena.menuPausaAtivado=!cena.jogoIniciado;
                 break;
         }
     }
