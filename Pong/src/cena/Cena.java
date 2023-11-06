@@ -235,6 +235,12 @@ public class Cena implements GLEventListener{
             gerarTexto(gl, 275, 250, Color.white ,"Aperte espaço para começar o jogo");
         } else if (jogoIniciado && vidas != 0) {//começar os desenhos
             bordas(gl,glut);
+            corações(gl,glut);
+            gerarTexto(gl, 800, 950, Color.white ,"Score");
+            gerarTexto(gl, 800, 900, Color.white , String.valueOf(pontuacao));
+            gerarTexto(gl, 800, 850, Color.white ,"Fase");
+            gerarTexto(gl, 820, 800, Color.white , String.valueOf(fase));
+
             if (vidas!= 0){ bolinha(gl,glut); }
             movimentarBolinha();
 
@@ -251,7 +257,7 @@ public class Cena implements GLEventListener{
         } else if (vidas == 0){
             menuGameOver = true;
             gerarTexto(gl, 425, 500, Color.white ,"Game Over");
-            gerarTexto(gl, 275, 250, Color.white ,"Aperte espaço para voltar ao menu");
+            gerarTexto(gl, 275, 250, Color.white ,"Aperte  espaço  para  reiniciar !!");
         }
         gl.glFlush();
     }
@@ -299,6 +305,21 @@ public class Cena implements GLEventListener{
         gl.glColor3f(1,1,1);
         tamanhoObstaculo = tamanhoInicialObstaculo + (20 * (fase-1));
         glut.glutSolidSphere(tamanhoObstaculo/2,(int)tamanhoObstaculo,(int)tamanhoObstaculo);
+        gl.glPopMatrix();
+    }
+
+    public void corações(GL2 gl, GLUT glut){
+        gl.glPushMatrix();
+        gl.glTranslatef(-1150,1000,0);
+        for (int i = 0; i < vidas ; i++) {
+            float y =- (100 * i) - (20f *i);
+            System.out.println(y);
+            gl.glPushMatrix();
+            gl.glTranslatef(0,y,0);
+            gl.glColor3f(1,0,0);
+            glut.glutSolidCube(100);
+            gl.glPopMatrix();
+        }
         gl.glPopMatrix();
     }
 
