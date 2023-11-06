@@ -33,8 +33,31 @@ public class Cena implements GLEventListener{
     public boolean menuPrincipalAtivado = true;
     public boolean jogoIniciado = false;
     public boolean menuPausaAtivado = false;
+    public boolean menuGameOver = false;
 
     public int mode;
+    public void resetarPosicaoInicialBolinha(){
+        translacaoYBolinha = 0;
+        extremidadeSuperiorYBolinha = size / 2;
+        extremidadeInferiorYBolinha = - size / 2;
+        taxaAtualizacaoY = - taxaAtualizacaoY;
+
+        translacaoXBolinha = 0;
+        extremidadeDireitaXBolinha = size / 2;
+    }
+    public void resetarJogo(){
+        resetarPosicaoInicialBolinha();
+        taxaAtualizacaoY = velocidadeInicialY;
+
+        movimentacaoBarra=0;
+        extremidadeDireitaBarra = size*3;
+        extremidadeEsquerdaBarra =extremidadeDireitaBarra -(size*6);
+
+        menuGameOver=false;
+        vidas = 5;
+        pontuacao = 0;
+        fase= 1;
+    }
     public void colisaoObstaculo(){
         if(extremidadeDireitaXBolinha >= -tamanhoObstaculo/2 && extremidadeDireitaXBolinha <= tamanhoObstaculo/2){
             if (extremidadeInferiorYBolinha <= tamanhoObstaculo/2 && extremidadeInferiorYBolinha >= (tamanhoObstaculo/2) - 20)// parte superior + margem de erro
@@ -169,13 +192,7 @@ public class Cena implements GLEventListener{
             }else if(extremidadeInferiorYBolinha <= - extremidadeJanela ){
                 vidas-=1;
                 //resetando valores iniciaais
-                translacaoYBolinha = 0;
-                extremidadeSuperiorYBolinha = size / 2;
-                extremidadeInferiorYBolinha = - size / 2;
-                taxaAtualizacaoY = - taxaAtualizacaoY;
-
-                translacaoXBolinha = 0;
-                extremidadeDireitaXBolinha = size / 2;
+                resetarPosicaoInicialBolinha();
             }
         }
     }
@@ -216,7 +233,7 @@ public class Cena implements GLEventListener{
         if (menuPrincipalAtivado){
             gerarTexto(gl, 450, 750, Color.white ,"PONG");
             gerarTexto(gl, 275, 250, Color.white ,"Aperte espaço para começar o jogo");
-        } else if (jogoIniciado) {//começar os desenhos
+        } else if (jogoIniciado && vidas != 0) {//começar os desenhos
             bordas(gl,glut);
             if (vidas!= 0){ bolinha(gl,glut); }
             movimentarBolinha();
@@ -231,6 +248,10 @@ public class Cena implements GLEventListener{
         } else if (menuPausaAtivado) {
             gerarTexto(gl, 450, 500, Color.white ,"PAUSE");
             gerarTexto(gl, 275, 250, Color.white ,"Aperte espaço para voltar ao jogo");
+        } else if (vidas == 0){
+            menuGameOver = true;
+            gerarTexto(gl, 425, 500, Color.white ,"Game Over");
+            gerarTexto(gl, 275, 250, Color.white ,"Aperte espaço para voltar ao menu");
         }
         gl.glFlush();
     }
@@ -240,11 +261,11 @@ public class Cena implements GLEventListener{
         gl.glColor3f(1,1,1);
         gl.glLineWidth(100f);
         gl.glBegin(GL.GL_LINE_LOOP);
-            gl.glVertex2f(-1000,1000);
-            gl.glVertex2f(1000,1000);
-            gl.glVertex2f(1000,-1000);
-            gl.glVertex2f(-1000,-1000);
-            gl.glVertex2f(-1000,1000);
+            gl.glVertex2f(-1050,1040);
+            gl.glVertex2f(1050,1040);
+            gl.glVertex2f(1050,-1050);
+            gl.glVertex2f(-1050,-1050);
+            gl.glVertex2f(-1050,1050);
         gl.glEnd();
         gl.glPopMatrix();
     }
