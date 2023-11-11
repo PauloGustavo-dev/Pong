@@ -35,6 +35,20 @@ public class Cena implements GLEventListener{
     public boolean menuPausaAtivado = false;
     public boolean menuGameOver = false;
 
+    public boolean texturaCoracaoAplicada = false;
+
+    //Adicionando Variáveis para textura
+
+    public static final String texturaCoracao = "Pong/src/texturas/textura_coracao.jpeg";
+
+    // Adicionando Variávies para o filtro da textura
+    public int filtro = GL2.GL_LINEAR; ////GL_NEAREST ou GL_LINEAR
+    public int wrap = GL2.GL_REPEAT;  //GL.GL_REPEAT ou GL.GL_CLAMP
+    public int modo = GL2.GL_DECAL; ////GL.GL_MODULATE ou GL.GL_DECAL ou GL.GL_BLEND
+
+    // Importação da Classe "Textura.java"
+    private textura.Textura textura;
+
     public int mode;
     public void resetarPosicaoInicialBolinha(){
         translacaoYBolinha = 0;
@@ -198,7 +212,7 @@ public class Cena implements GLEventListener{
     }
     @Override
     public void init(GLAutoDrawable drawable) {
-        //dados iniciais da cena        
+        //dados iniciais da cena
         GL2 gl = drawable.getGL().getGL2();
         //Estabelece as coordenadas do SRU (Sistema de Referencia do Universo)
 //        xMin = yMin = zMin = -extremidadeJanela;
@@ -212,6 +226,9 @@ public class Cena implements GLEventListener{
 
         //configurações de texto
         textRenderer = new TextRenderer(new Font("Serif", Font.BOLD, 30));
+
+        //Configura a Textura
+        textura = new textura.Textura(6);
 
         //Habilita o buffer de profundidade
         gl.glEnable(GL2.GL_DEPTH_TEST);
@@ -243,6 +260,7 @@ public class Cena implements GLEventListener{
             gerarTexto(gl, 800, 900, Color.white , String.valueOf(pontuacao));
             gerarTexto(gl, 800, 850, Color.white ,"Fase");
             gerarTexto(gl, 820, 800, Color.white , String.valueOf(fase));
+            geraTexturaCoracao(gl, glut);
 
             if (vidas!= 0){ bolinha(gl,glut); }
             movimentarBolinha();
@@ -321,10 +339,55 @@ public class Cena implements GLEventListener{
             gl.glTranslatef(0,y,0);
             gl.glColor3f(1,0,0);
             glut.glutSolidCube(100);
+            textura.gerarTextura(gl, texturaCoracao, 1);
+
             gl.glPopMatrix();
         }
         gl.glPopMatrix();
     }
+
+    public void geraTexturaCoracao(GL2 gl, GLUT glut){
+
+        if(!texturaCoracaoAplicada){
+
+            for (int i = 0; i < vidas; i++) {
+                //não é geração de textura automática
+                textura.setAutomatica(false);
+
+                // Criando a face para o Primeiro Coração
+                gl.glBegin (GL2.GL_QUADS );
+                //coordenadas da Textura            //coordenadas do quads
+                gl.glTexCoord2f(1f, 1f);     gl.glVertex3f(-1100f, 1050f - (20*i) - (100*i),  1000f);
+                gl.glTexCoord2f(1f, 0.0f);     gl.glVertex3f( -1100f, 950f - (20*i) - (100*i),  1000f);
+                gl.glTexCoord2f(0.0f, 0.0f);     gl.glVertex3f( -1200f,  950f - (20*i) - (100*i),  1000f);
+                gl.glTexCoord2f(0.0f, 1f);     gl.glVertex3f(-1200f,  1050f - (20*i) - (100*i),  1000f);
+                gl.glEnd();
+
+                //configura os filtros
+                textura.setFiltro(filtro);
+                textura.setModo(modo);
+                textura.setWrap(wrap);
+
+                //cria a textura indicando o local da imagem e o índice
+                textura.gerarTextura(gl, texturaCoracao, i);
+
+                //desabilita a textura indicando o índice
+                if(menuPausaAtivado) {
+                    textura.desabilitarTextura(gl, i);
+                }
+
+                //configura os filtros
+                textura.setFiltro(filtro);
+                textura.setModo(modo);
+                textura.setWrap(wrap);
+            }
+
+        }else {
+            texturaCoracaoAplicada = true;
+        }
+    }
+
+
 
     public void gerarTexto(GL2 gl, int xPosicao, int yPosicao, Color cor, String texto){
         gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
