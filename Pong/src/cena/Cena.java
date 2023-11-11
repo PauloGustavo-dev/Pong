@@ -229,6 +229,9 @@ public class Cena implements GLEventListener{
 
         gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, mode);
 
+        iluminacaoDifusa(gl);
+        ligarLuz(gl);
+
 
         if (menuPrincipalAtivado){
             gerarTexto(gl, 450, 750, Color.white ,"PONG");
@@ -331,6 +334,21 @@ public class Cena implements GLEventListener{
         textRenderer.draw(texto, xPosicao, yPosicao);
         textRenderer.endRendering();
         gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, mode);
+    }
+
+    public void iluminacaoDifusa(GL2 gl) {
+        float luzDifusa[] = {1.0f, 1.0f, 1.0f, 1.0f};
+        float posicaoLuz[] = {-50.0f, 0.0f, 100.0f, 0.0f};
+
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, luzDifusa, 0);
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, posicaoLuz, 0);
+    }
+
+    public void ligarLuz(GL2 gl) {
+        gl.glEnable(GL2.GL_COLOR_MATERIAL);
+        gl.glEnable(GL2.GL_LIGHTING);
+        gl.glEnable(GL2.GL_LIGHT0);
+        gl.glShadeModel(GL2.GL_SMOOTH);
     }
 
     @Override
