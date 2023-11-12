@@ -2,9 +2,9 @@
 
 ### Participantes envolvidos.
 
-Arthur Korkiskis Felismino. Ra: 125111351312.
-Gustavo Carreiro. Ra: 125111352297.
-Paulo Gustavo Sousa Brito. Ra: 125111378562.
+- Arthur Korkiskis Felismino. Ra: **125111351312**.
+- Gustavo Carreiro. Ra: **125111352297**.
+- Paulo Gustavo Sousa Brito. Ra: **125111378562**.
 
 ### Descrição do Projeto A3:
 

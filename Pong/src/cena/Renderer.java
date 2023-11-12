@@ -29,7 +29,7 @@ public class Renderer {
         
         window.addGLEventListener(cena); //adiciona a Cena a Janela  
         //Habilita o teclado : cena
-        window.addKeyListener(new KeyBoard(cena));
+         window.addKeyListener(new KeyBoard(cena));
         
         //window.requestFocus();
         FPSAnimator animator = new FPSAnimator(window, 60);
