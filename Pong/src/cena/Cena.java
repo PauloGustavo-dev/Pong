@@ -7,21 +7,19 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.awt.TextRenderer;
+import textura.Textura;
+
 import java.util.Random;
 import java.awt.Color;
 import java.awt.Font;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Cena implements GLEventListener{
     private float xMin, xMax, yMin, yMax, zMin, zMax;
     public final float extremidadeJanela = 1000f;
     public float size = 50;
     private TextRenderer textRenderer;
-    public float extremidadeDireitaXBolinha = size/2, extremidadeEsquerdaXBolinha = -size/2;
-    public float extremidadeSuperiorYBolinha = size/2, extremidadeInferiorYBolinha = -size/2;
+    public float extremidadeDireitaXBolinha = size, extremidadeEsquerdaXBolinha = -size;
+    public float extremidadeSuperiorYBolinha = size, extremidadeInferiorYBolinha = -size;
     public float translacaoXBolinha=0, translacaoYBolinha=0;
     public final float velocidadeInicialX = 20f, velocidadeInicialY = 15f;
     public float taxaAtualizacaoX =20f , taxaAtualizacaoY =15f;
@@ -49,7 +47,7 @@ public class Cena implements GLEventListener{
 
     //Adicionando Variáveis para textura
 
-    public static final String texturaCoracao = "Pong/src/texturas/coracao_256.jpg";
+    public static final String texturaCoracao = "Pong-master/Pong/src/texturas/coracao_256.jpg";
 
     // Adicionando Variávies para o filtro da textura
     public int filtro = GL2.GL_LINEAR; ////GL_NEAREST ou GL_LINEAR
@@ -197,12 +195,12 @@ public class Cena implements GLEventListener{
     public void movimentarBolinha(){
         if (jogoIniciado && vidas!=0){
             translacaoYBolinha+= taxaAtualizacaoY;//inicia a movimentacao da bolinha no eixo y
-            extremidadeSuperiorYBolinha =translacaoYBolinha+(size/2);//armazena a extremidade Y com base na translacao e tamanho do objeto( /2 porque a bolinha é iniciada no centro da janela )
-            extremidadeInferiorYBolinha =translacaoYBolinha-(size/2);
+            extremidadeSuperiorYBolinha =translacaoYBolinha + size;//armazena a extremidade Y com base na translacao e tamanho do objeto( /2 porque a bolinha é iniciada no centro da janela )
+            extremidadeInferiorYBolinha =translacaoYBolinha - size;
 
             translacaoXBolinha+= taxaAtualizacaoX;//inicia a movimentacao da bolinha no eixo X
-            extremidadeDireitaXBolinha =translacaoXBolinha+(size/2);//armazena a extremidade X
-            extremidadeEsquerdaXBolinha= translacaoXBolinha-(size/2);
+            extremidadeDireitaXBolinha =translacaoXBolinha + size;//armazena a extremidade X
+            extremidadeEsquerdaXBolinha= translacaoXBolinha - size;
 
             //verificar colisoes paredes
             if(extremidadeDireitaXBolinha >= extremidadeJanela ){
@@ -238,7 +236,7 @@ public class Cena implements GLEventListener{
         textRenderer = new TextRenderer(new Font("Serif", Font.BOLD, 30));
 
         //Configura a Textura
-        textura = new Textura(6);
+        textura = new Textura(5 );
 
         //Habilita o buffer de profundidade
         gl.glEnable(GL2.GL_DEPTH_TEST);
@@ -248,6 +246,7 @@ public class Cena implements GLEventListener{
     public void display(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
         GLUT glut = new GLUT();
+
 
         gl.glClearColor(0, 0, 0, 1);
 
@@ -286,7 +285,7 @@ public class Cena implements GLEventListener{
                 gl.glPopMatrix();
                 gerarTexto(gl, 275, 250, Color.white ,"Aperte espaço para começar/pausar o jogo");
         } else if (jogoIniciado && vidas != 0) {//começar os desenhos
-            bordas(gl,glut);
+            bordas(gl,glut,vermelho,verde, azul);
             corações(gl,glut);
             gerarTexto(gl, 800, 950, Color.white ,"Score");
             gerarTexto(gl, 800, 900, Color.white , String.valueOf(pontuacao));
@@ -317,9 +316,9 @@ public class Cena implements GLEventListener{
         gl.glFlush();
     }
 
-    public void bordas(GL2 gl, GLUT glut){
+    public void bordas(GL2 gl,GLUT glut, float r, float g, float b){
         gl.glPushMatrix();
-        gl.glColor3f(1,1,1);
+        gl.glColor3f(r, g, b);
         gl.glLineWidth(100f);
         gl.glBegin(GL.GL_LINE_LOOP);
             gl.glVertex2f(-1050,1040);
@@ -354,6 +353,8 @@ public class Cena implements GLEventListener{
             x+=size;
         }
         gl.glPopMatrix();
+        gl.glEnable(GL2.GL_LIGHTING);
+        gl.glEnable(GL2.GL_LIGHT1);
     }
 
     public void obstaculo(GL2 gl, GLUT glut){
@@ -365,155 +366,173 @@ public class Cena implements GLEventListener{
     }
 
     public void corações(GL2 gl, GLUT glut){
-        gl.glPushMatrix();
-        gl.glTranslatef(-1150,1000,0);
-        for (int i = 0; i < vidas ; i++) {
-            float y =- (100 * i) - (20f *i);
-            System.out.println(y);
-            gl.glPushMatrix();
-            gl.glTranslatef(0,y,0);
-            gl.glColor3f(1,0,0);
-            glut.glutSolidCube(100);
-            textura.gerarTextura(gl, texturaCoracao, 1);
+        gl.glEnable(GL2.GL_DEPTH_TEST);
 
-            gl.glPopMatrix();
-        }
-        gl.glPopMatrix();
-
-        if (texturaCoracaoAplicada == false) {
-
+        if (vidas>=1) {
             // Textura para o primeiro coração:
 
             //não é geração de textura automática
             textura.setAutomatica(false);
 
-            // Criando a face para o Primeiro Coração
-            gl.glBegin (GL2.GL_QUADS );
-            //coordenadas da Textura            //coordenadas do quads
-            gl.glTexCoord2f(1f, 1f);     gl.glVertex3f(-1100f, 1050f,  1000f);
-            gl.glTexCoord2f(1f, 0.0f);     gl.glVertex3f( -1100f, 950f,  1000f);
-            gl.glTexCoord2f(0.0f, 0.0f);     gl.glVertex3f( -1200f,  950f,  1000f);
-            gl.glTexCoord2f(0.0f, 1f);     gl.glVertex3f(-1200f,  1050f,  1000f);
-            gl.glEnd();
-
             textura.setFiltro(filtro);
             textura.setModo(modo);
             textura.setWrap(wrap);
 
             //cria a textura indicando o local da imagem e o índice
+//            gl.glEnable(GL2.GL_TEXTURE_2D);
             textura.gerarTextura(gl, texturaCoracao, 0);
+            // Criando a face para o Primeiro Coração
+            gl.glBegin(GL2.GL_QUADS);
+            //coordenadas da Textura            //coordenadas do quads
+            gl.glTexCoord2f(1f, 1f);
+            gl.glVertex3f(-1100f, 1050f, 1000f);
+            gl.glTexCoord2f(1f, 0.0f);
+            gl.glVertex3f(-1100f, 950f, 1000f);
+            gl.glTexCoord2f(0.0f, 0.0f);
+            gl.glVertex3f(-1200f, 950f, 1000f);
+            gl.glTexCoord2f(0.0f, 1f);
+            gl.glVertex3f(-1200f, 1050f, 1000f);
+            gl.glEnd();
 
             //desabilita a textura indicando o índice
-            if(menuPausaAtivado) {
-                textura.desabilitarTextura(gl, 6);
-            }
+            textura.desabilitarTextura(gl, 0);
+//            gl.glDisable(GL2.GL_TEXTURE_2D);
+
+//            gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+        }
+        if (vidas>=2) {
 
             //Textura para o segundo coração
 
             //não é geração de textura automática
+//            gl.glEnable(GL2.GL_TEXTURE_2D);
             textura.setAutomatica(false);
-
-            // Criando a face para o segundo Coração
-            gl.glBegin (GL2.GL_QUADS );
-            //coordenadas da Textura            //coordenadas do quads
-            gl.glTexCoord2f(1f, 1f);     gl.glVertex3f(-1100f, 850f,  1000f);
-            gl.glTexCoord2f(1f, 0.0f);     gl.glVertex3f( -1100f, 750f,  1000f);
-            gl.glTexCoord2f(0.0f, 0.0f);     gl.glVertex3f( -1200f,  750f,  1000f);
-            gl.glTexCoord2f(0.0f, 1f);     gl.glVertex3f(-1200f,  850f,  1000f);
-            gl.glEnd();
 
             textura.setFiltro(filtro);
             textura.setModo(modo);
             textura.setWrap(wrap);
 
             //cria a textura indicando o local da imagem e o índice
-            textura.gerarTextura(gl, texturaCoracao, 0);
+            textura.gerarTextura(gl, texturaCoracao, 1);
+            // Criando a face para o segundo Coração
+            gl.glBegin(GL2.GL_QUADS);
+            //coordenadas da Textura            //coordenadas do quads
+            gl.glTexCoord2f(1f, 1f);
+            gl.glVertex3f(-1100f, 950f, 1000f);
+            gl.glTexCoord2f(1f, 0.0f);
+            gl.glVertex3f(-1100f, 850f, 1000f);
+            gl.glTexCoord2f(0.0f, 0.0f);
+            gl.glVertex3f(-1200f, 850f, 1000f);
+            gl.glTexCoord2f(0.0f, 1f);
+            gl.glVertex3f(-1200f, 950f, 1000f);
+            gl.glEnd();
 
             //desabilita a textura indicando o índice
-            if(menuPausaAtivado) {
-                textura.desabilitarTextura(gl, 6);
-            }
 
+            textura.desabilitarTextura(gl, 1);
+//            gl.glDisable(GL2.GL_TEXTURE_2D);
+
+//            gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+        }
+        if (vidas>=3) {
             //Textura para o terceiro coração
 
             //não é geração de textura automática
+//            gl.glEnable(GL2.GL_TEXTURE_2D);
             textura.setAutomatica(false);
-
-            // Criando a face para o terceiro Coração
-            gl.glBegin (GL2.GL_QUADS );
-            //coordenadas da Textura            //coordenadas do quads
-            gl.glTexCoord2f(1f, 1f);     gl.glVertex3f(-1100f, 950f,  1000f);
-            gl.glTexCoord2f(1f, 0.0f);     gl.glVertex3f( -1100f, 850f,  1000f);
-            gl.glTexCoord2f(0.0f, 0.0f);     gl.glVertex3f( -1200f,  850f,  1000f);
-            gl.glTexCoord2f(0.0f, 1f);     gl.glVertex3f(-1200f,  950f,  1000f);
-            gl.glEnd();
 
             textura.setFiltro(filtro);
             textura.setModo(modo);
             textura.setWrap(wrap);
 
             //cria a textura indicando o local da imagem e o índice
-            textura.gerarTextura(gl, texturaCoracao, 0);
+            textura.gerarTextura(gl, texturaCoracao, 2);
+            gl.glBegin(GL2.GL_QUADS);
+            //coordenadas da Textura            //coordenadas do quads
+            gl.glTexCoord2f(1f, 1f);
+            gl.glVertex3f(-1100f, 850f, 1000f);
+            gl.glTexCoord2f(1f, 0.0f);
+            gl.glVertex3f(-1100f, 750f, 1000f);
+            gl.glTexCoord2f(0.0f, 0.0f);
+            gl.glVertex3f(-1200f, 750f, 1000f);
+            gl.glTexCoord2f(0.0f, 1f);
+            gl.glVertex3f(-1200f, 850f, 1000f);
+            gl.glEnd();
+            // Criando a face para o terceiro Coração
+
 
             //desabilita a textura indicando o índice
-            if(menuPausaAtivado) {
-                textura.desabilitarTextura(gl, 6);
-            }
+
+            textura.desabilitarTextura(gl, 2);
+//            gl.glDisable(GL2.GL_TEXTURE_2D);
+
+//            gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+        }
+        if (vidas>=4) {
+
 
             //Textura para o quarto coração
 
             //não é geração de textura automática
+//            gl.glEnable(GL2.GL_TEXTURE_2D);
             textura.setAutomatica(false);
-
-            // Criando a face para o quarto Coração
-            gl.glBegin (GL2.GL_QUADS );
-            //coordenadas da Textura            //coordenadas do quads
-            gl.glTexCoord2f(1f, 1f);     gl.glVertex3f(-1100f, 750f,  1000f);
-            gl.glTexCoord2f(1f, 0.0f);     gl.glVertex3f( -1100f, 650f,  1000f);
-            gl.glTexCoord2f(0.0f, 0.0f);     gl.glVertex3f( -1200f,  650f,  1000f);
-            gl.glTexCoord2f(0.0f, 1f);     gl.glVertex3f(-1200f,  750f,  1000f);
-            gl.glEnd();
 
             textura.setFiltro(filtro);
             textura.setModo(modo);
             textura.setWrap(wrap);
 
             //cria a textura indicando o local da imagem e o índice
-            textura.gerarTextura(gl, texturaCoracao, 0);
+            textura.gerarTextura(gl, texturaCoracao, 3);
+            // Criando a face para o quarto Coração
+            gl.glBegin(GL2.GL_QUADS);
+            //coordenadas da Textura            //coordenadas do quads
+            gl.glTexCoord2f(1f, 1f);
+            gl.glVertex3f(-1100f, 750f, 1000f);
+            gl.glTexCoord2f(1f, 0.0f);
+            gl.glVertex3f(-1100f, 650f, 1000f);
+            gl.glTexCoord2f(0.0f, 0.0f);
+            gl.glVertex3f(-1200f, 650f, 1000f);
+            gl.glTexCoord2f(0.0f, 1f);
+            gl.glVertex3f(-1200f, 750f, 1000f);
+            gl.glEnd();
 
             //desabilita a textura indicando o índice
-            if(menuPausaAtivado) {
-                textura.desabilitarTextura(gl, 6);
-            }
+            textura.desabilitarTextura(gl, 3);
+//            gl.glDisable(GL2.GL_TEXTURE_2D);
 
+//            gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+        }
+        if(vidas==5) {
             //Textura para o quinto coração
 
             //não é geração de textura automática
+//            gl.glEnable(GL2.GL_TEXTURE_2D);
             textura.setAutomatica(false);
-
-            // Criando a face para o quinto Coração
-            gl.glBegin (GL2.GL_QUADS );
-            //coordenadas da Textura            //coordenadas do quads
-            gl.glTexCoord2f(1f, 1f);     gl.glVertex3f(-1100f, 650f,  1000f);
-            gl.glTexCoord2f(1f, 0.0f);     gl.glVertex3f( -1100f, 550f,  1000f);
-            gl.glTexCoord2f(0.0f, 0.0f);     gl.glVertex3f( -1200f,  550f,  1000f);
-            gl.glTexCoord2f(0.0f, 1f);     gl.glVertex3f(-1200f,  650f,  1000f);
-            gl.glEnd();
 
             textura.setFiltro(filtro);
             textura.setModo(modo);
             textura.setWrap(wrap);
 
             //cria a textura indicando o local da imagem e o índice
-            textura.gerarTextura(gl, texturaCoracao, 0);
+            textura.gerarTextura(gl, texturaCoracao, 4);
+            // Criando a face para o quinto Coração
+            gl.glBegin(GL2.GL_QUADS);
+            //coordenadas da Textura            //coordenadas do quads
+            gl.glTexCoord2f(1f, 1f);
+            gl.glVertex3f(-1100f, 650f, 1000f);
+            gl.glTexCoord2f(1f, 0.0f);
+            gl.glVertex3f(-1100f, 550f, 1000f);
+            gl.glTexCoord2f(0.0f, 0.0f);
+            gl.glVertex3f(-1200f, 550f, 1000f);
+            gl.glTexCoord2f(0.0f, 1f);
+            gl.glVertex3f(-1200f, 650f, 1000f);
+            gl.glEnd();
 
             //desabilita a textura indicando o índice
-            if(menuPausaAtivado) {
-                textura.desabilitarTextura(gl, 6);
-            }
-
-            texturaCoracaoAplicada = true;
+            textura.desabilitarTextura(gl, 4);
+//            gl.glDisable(GL2.GL_TEXTURE_2D);
         }
+
 
 
     }
@@ -531,7 +550,7 @@ public class Cena implements GLEventListener{
 
     public void iluminacaoDifusa(GL2 gl) {
         float luzDifusa[] = {1.0f, 1.0f, 1.0f, 1.0f};
-        float posicaoLuz[] = {-50.0f, 0.0f, 100.0f, 0.0f};
+        float posicaoLuz[] = {-50.0f, -5.0f, 100.0f, 0.0f};
 
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, luzDifusa, 0);
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, posicaoLuz, 0);
