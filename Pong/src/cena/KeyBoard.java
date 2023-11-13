@@ -16,8 +16,7 @@ public class KeyBoard implements KeyListener{
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
             System.exit(0);
         switch (e.getKeyChar()) {
-            case 'a':
-                break;
+
         }
 
         switch (e.getKeyCode()){
@@ -44,7 +43,49 @@ public class KeyBoard implements KeyListener{
                     cena.menuPrincipalAtivado=false;
                     cena.menuPausaAtivado=!cena.jogoIniciado;
                 }
+
                 break;
+//            Tecla c
+            case 67:
+
+                if (cena.corSelecionada == 3){
+                    cena.corSelecionada = 0;
+                } else {
+                    cena.corSelecionada++;
+                }
+
+                switch (cena.corSelecionada) {
+                    case 0:
+                        cena.vermelho = 1f;
+                        cena.verde = 1f;
+                        cena.azul = 1f;
+                        break;
+                    case 1:
+                        cena.vermelho = 0f;
+                        cena.verde = 0f;
+                        cena.azul = 1f;
+                        break;
+                    case 2:
+                        cena.vermelho = 0f;
+                        cena.verde = 1f;
+                        cena.azul = 0f;
+                        break;
+                    case 3:
+                        cena.vermelho = 1f;
+                        cena.verde = 0f;
+                        cena.azul = 0f;
+                        break;
+                }
+
+                break;
+
+            case 77:
+
+                if (!cena.jogoIniciado){
+                    cena.menuPausaAtivado = false;
+                    cena.menuPrincipalAtivado = true;
+                    cena.resetarJogo();
+                }
         }
     }
 
