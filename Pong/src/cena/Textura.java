@@ -1,4 +1,4 @@
-package cena;
+package textura;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
@@ -129,7 +129,7 @@ public class Textura {
 
         gl.glEnable(GL2.GL_TEXTURE_GEN_S); // Habilita a geracao da textura
         gl.glEnable(GL2.GL_TEXTURE_GEN_T);
-//        gl.glEnable(GL2.GL_TEXTURE_2D);
+        gl.glEnable(GL2.GL_TEXTURE_2D);
 
         gl.glTexGeni(GL2.GL_S, GL2.GL_TEXTURE_GEN_MODE, genModo);
         gl.glTexGeni(GL2.GL_T, GL2.GL_TEXTURE_GEN_MODE, genModo);
