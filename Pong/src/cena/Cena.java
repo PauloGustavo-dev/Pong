@@ -47,7 +47,7 @@ public class Cena implements GLEventListener{
 
     //Adicionando Variáveis para textura
 
-    public static final String texturaCoracao = "Pong-master/Pong/src/texturas/coracao_256.jpg";
+    public static final String texturaCoracao = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\texturas\\coracao_256.jpg";
 
     // Adicionando Variávies para o filtro da textura
     public int filtro = GL2.GL_LINEAR; ////GL_NEAREST ou GL_LINEAR
@@ -58,14 +58,17 @@ public class Cena implements GLEventListener{
     private Textura textura;
 
     public int mode;
+    private float margemDeErroX;
+    private float margemDeErroY;
+
     public void resetarPosicaoInicialBolinha(){
         translacaoYBolinha = 0;
-        extremidadeSuperiorYBolinha = size / 2;
-        extremidadeInferiorYBolinha = - size / 2;
+        extremidadeSuperiorYBolinha = size;
+        extremidadeInferiorYBolinha = - size;
         taxaAtualizacaoY = - taxaAtualizacaoY;
 
         translacaoXBolinha = 0;
-        extremidadeDireitaXBolinha = size / 2;
+        extremidadeDireitaXBolinha = size;
     }
     public void resetarJogo(){
         resetarPosicaoInicialBolinha();
@@ -82,7 +85,7 @@ public class Cena implements GLEventListener{
     }
     public void colisaoObstaculo(){
         if(extremidadeDireitaXBolinha >= -tamanhoObstaculo/2 && extremidadeDireitaXBolinha <= tamanhoObstaculo/2){
-            if (extremidadeInferiorYBolinha <= tamanhoObstaculo/2 && extremidadeInferiorYBolinha >= (tamanhoObstaculo/2) - 20)// parte superior + margem de erro
+            if (extremidadeInferiorYBolinha <= tamanhoObstaculo/2 && extremidadeInferiorYBolinha >= (tamanhoObstaculo/2))// parte superior + margem de erro
             {
                 //taxa crescente, eixo y
                 taxaAtualizacaoY = velocidadeInicialY + (5 * (fase-1));
@@ -134,8 +137,6 @@ public class Cena implements GLEventListener{
 
     public void movimentarBarra(){
         //verifica a colisão da barra com a parede
-        System.out.println(taxaAtualizacaoY);
-
 
         if (movimentacaoBarra+ size*3 >= extremidadeJanela){
             movimentacaoBarra = extremidadeJanela - size*3;
@@ -145,7 +146,7 @@ public class Cena implements GLEventListener{
             extremidadeDireitaBarra = - extremidadeJanela + (size*6);
         }
         //verifica colisao no eixo y
-        if (extremidadeInferiorYBolinha <= posicaoYbarra+(size) && extremidadeInferiorYBolinha >= posicaoYbarra+(size/2))// parte superior + margem de erro
+        if (extremidadeInferiorYBolinha <= posicaoYbarra && extremidadeInferiorYBolinha >= posicaoYbarra)// parte superior + margem de erro
         {
             //verificar colisão com a parte superior da barrra
             if(extremidadeDireitaXBolinha >= extremidadeEsquerdaBarra && extremidadeDireitaXBolinha <= extremidadeDireitaBarra){
@@ -195,12 +196,36 @@ public class Cena implements GLEventListener{
     public void movimentarBolinha(){
         if (jogoIniciado && vidas!=0){
             translacaoYBolinha+= taxaAtualizacaoY;//inicia a movimentacao da bolinha no eixo y
-            extremidadeSuperiorYBolinha =translacaoYBolinha + size;//armazena a extremidade Y com base na translacao e tamanho do objeto( /2 porque a bolinha é iniciada no centro da janela )
+            extremidadeSuperiorYBolinha =translacaoYBolinha + size + margemDeErroY;//armazena a extremidade Y com base na translacao e tamanho do objeto( /2 porque a bolinha é iniciada no centro da janela )
             extremidadeInferiorYBolinha =translacaoYBolinha - size;
 
             translacaoXBolinha+= taxaAtualizacaoX;//inicia a movimentacao da bolinha no eixo X
-            extremidadeDireitaXBolinha =translacaoXBolinha + size;//armazena a extremidade X
-            extremidadeEsquerdaXBolinha= translacaoXBolinha - size;
+            extremidadeDireitaXBolinha =translacaoXBolinha + size + margemDeErroX;//armazena a extremidade X
+            extremidadeEsquerdaXBolinha= translacaoXBolinha - size + margemDeErroX;
+            
+            if(taxaAtualizacaoX>= 0){
+                float pixeisAteParede = extremidadeJanela - extremidadeDireitaXBolinha;
+                float restoMargemDeErro = pixeisAteParede % taxaAtualizacaoX;
+                if(restoMargemDeErro != 0){
+                    margemDeErroX += restoMargemDeErro;
+                    extremidadeDireitaXBolinha += restoMargemDeErro;
+                }
+            }else{
+                float pixeisAteParede = - extremidadeJanela + extremidadeEsquerdaXBolinha;
+                float restoMargemDeErro = pixeisAteParede % taxaAtualizacaoX;
+                if(restoMargemDeErro != 0){
+                    margemDeErroX -= restoMargemDeErro;
+                    extremidadeDireitaXBolinha -= restoMargemDeErro;
+                }
+            }
+            if(taxaAtualizacaoY>=0){
+                float pixeisAteParede = extremidadeJanela - extremidadeSuperiorYBolinha;
+                float restoMargemDeErro = pixeisAteParede % taxaAtualizacaoY;
+                if(restoMargemDeErro != 0){
+                    margemDeErroY += restoMargemDeErro;
+                    extremidadeSuperiorYBolinha += restoMargemDeErro;
+                }
+            }
 
             //verificar colisoes paredes
             if(extremidadeDireitaXBolinha >= extremidadeJanela ){
@@ -258,18 +283,6 @@ public class Cena implements GLEventListener{
         iluminacaoDifusa(gl);
         ligarLuz(gl);
 
-//        Timer timer;
-//        final boolean[] textoVisivel = {true};
-//
-//        // Inicialize o temporizador com o intervalo desejado (em milissegundos)
-//        timer = new Timer(500, new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                // Inverte a visibilidade do texto a cada vez que o temporizador é acionado
-//                textoVisivel[0] = !textoVisivel[0];
-//            }
-//        });
-
         if (menuPrincipalAtivado){
                 gerarTexto(gl, 450, 850, Color.white ,"PONG");
                 gerarTexto(gl, 150, 700, Color.white ,"Como Jogar:");
@@ -292,15 +305,17 @@ public class Cena implements GLEventListener{
             gerarTexto(gl, 800, 850, Color.white ,"Fase");
             gerarTexto(gl, 820, 800, Color.white , String.valueOf(fase));
 
-            if (vidas!= 0){ bolinha(gl,glut, vermelho, verde, azul); }
-            movimentarBolinha();
+            if (vidas!= 0) {
+                bolinha(gl, glut, vermelho, verde, azul);
+                movimentarBolinha();
 
-            barra(gl,glut);
-            movimentarBarra();
+                barra(gl, glut);
+                movimentarBarra();
 
-            if (fase >= 2){
-                obstaculo(gl,glut);
-                colisaoObstaculo();
+                if (fase >= 2) {
+                    obstaculo(gl, glut);
+                    colisaoObstaculo();
+                }
             }
         } else if (menuPausaAtivado) {
                 gerarTexto(gl, 450, 500, Color.white ,"PAUSE");
@@ -319,20 +334,20 @@ public class Cena implements GLEventListener{
     public void bordas(GL2 gl,GLUT glut, float r, float g, float b){
         gl.glPushMatrix();
         gl.glColor3f(r, g, b);
-        gl.glLineWidth(100f);
+        gl.glLineWidth(1f);
         gl.glBegin(GL.GL_LINE_LOOP);
-            gl.glVertex2f(-1050,1040);
-            gl.glVertex2f(1050,1040);
-            gl.glVertex2f(1050,-1050);
-            gl.glVertex2f(-1050,-1050);
-            gl.glVertex2f(-1050,1050);
+            gl.glVertex2f(-1000,1000);
+            gl.glVertex2f(1000,1000);
+            gl.glVertex2f(1000,-1000);
+            gl.glVertex2f(-1000,-1000);
+            gl.glVertex2f(-1000,1000);
         gl.glEnd();
         gl.glPopMatrix();
     }
     public void bolinha(GL2 gl,GLUT glut, float r, float g, float b){
         gl.glPushMatrix();
         gl.glTranslatef(translacaoXBolinha, translacaoYBolinha, 0);
-        gl.glTranslatef(-10, -10, 0);//mantem a boliha no ponto central na inicializacao
+        gl.glTranslatef(margemDeErroX,margemDeErroY,0);
         // Aplica os valores convertidos:
         gl.glColor3f(r, g, b);
         glut.glutSolidSphere(size,500,500);
@@ -491,7 +506,7 @@ public class Cena implements GLEventListener{
             gl.glTexCoord2f(1f, 0.0f);
             gl.glVertex3f(-1100f, 650f, 1000f);
             gl.glTexCoord2f(0.0f, 0.0f);
-            gl.glVertex3f(-1200f, 650f, 1000f);
+            gl.glVertex3f(-1200f, 650f, 1000f );
             gl.glTexCoord2f(0.0f, 1f);
             gl.glVertex3f(-1200f, 750f, 1000f);
             gl.glEnd();
