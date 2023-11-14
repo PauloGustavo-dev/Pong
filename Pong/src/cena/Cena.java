@@ -59,8 +59,6 @@ public class Cena implements GLEventListener{
     public boolean menuPausaAtivado = false;
     public boolean menuGameOver = false;
 
-    public boolean texturaCoracaoAplicada = true;
-
     //Adicionando Variáveis para textura
 
     public static final String texturaCoracao = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\texturas\\coracao_256.jpg";
@@ -152,15 +150,13 @@ public class Cena implements GLEventListener{
         }
     }
 
-    public void movimentarBarra(){
+        public void movimentarBarra(){
 
         //verifica colisao no eixo y
-        if (extremidadeInferiorYBolinha <= posicaoYbarra && extremidadeInferiorYBolinha >= posicaoYbarra)// parte superior + margem de erro
-        {
-            //verificar colisão com a parte superior da barrra
-            if(extremidadeDireitaXBolinha >= extremidadeEsquerdaBarra && extremidadeDireitaXBolinha <= extremidadeDireitaBarra){
+        if(extremidadeDireitaXBolinha >= extremidadeEsquerdaBarra && extremidadeEsquerdaXBolinha <= extremidadeDireitaBarra){
+            if (extremidadeInferiorYBolinha == -800f)
+            {
                 pontuacao+=50;
-
                 fase = (pontuacao/200)+1;
 
                 //taxa crescente, eixo y
@@ -176,11 +172,9 @@ public class Cena implements GLEventListener{
                     taxaAtualizacaoX = velocidadeInicialX + (5 * (fase - 1));//pode aumentar velocidade a depender da fase
                     taxaAtualizacaoX += aleatorizaAcressimoX;// acressimo aleatorio para evitar repetição de colisão
                 }
-            }
-        }else if (extremidadeInferiorYBolinha <= posicaoYbarra+(size) && extremidadeInferiorYBolinha >= posicaoYbarra-(size)){
-            //verificar colisão com a parte lateral da barrra
-            if(extremidadeDireitaXBolinha >= extremidadeEsquerdaBarra && extremidadeDireitaXBolinha <= extremidadeDireitaBarra)
-             {
+            }else
+            if (extremidadeInferiorYBolinha <= -800f && extremidadeSuperiorYBolinha >= -850f)// parte superior + margem de erro
+            {
                 pontuacao+=50;
 
                 fase = (pontuacao/200)+1;
@@ -188,8 +182,8 @@ public class Cena implements GLEventListener{
                 //taxa crescente, eixo y
                 taxaAtualizacaoY = velocidadeInicialY + (5 * (fase-1));
 
-                 Random ran = new Random();
-                 int aleatorizaAcressimoX = ran.nextInt(6);
+                Random ran = new Random();
+                int aleatorizaAcressimoX = ran.nextInt(6);
                 //se bater na lateral a bolinha vai para o lado oposto em relação ao eixo x
                 if (taxaAtualizacaoX < 0){
                     taxaAtualizacaoX = velocidadeInicialX + (5 * (fase-1) );//pode aumentar velocidade a depender da fase
@@ -200,13 +194,14 @@ public class Cena implements GLEventListener{
                 }
             }
         }
+
     }
 
     public void movimentarBolinha(){
         if (jogoIniciado && vidas!=0){
             translacaoYBolinha+= taxaAtualizacaoY;//inicia a movimentacao da bolinha no eixo y
             extremidadeSuperiorYBolinha =translacaoYBolinha + size + margemDeErroY;//armazena a extremidade Y com base na translacao e tamanho do objeto( /2 porque a bolinha é iniciada no centro da janela )
-            extremidadeInferiorYBolinha =translacaoYBolinha - size;
+            extremidadeInferiorYBolinha =translacaoYBolinha - size + margemDeErroY;
 
             translacaoXBolinha+= taxaAtualizacaoX;//inicia a movimentacao da bolinha no eixo X
             extremidadeDireitaXBolinha =translacaoXBolinha + size + margemDeErroX;//armazena a extremidade X
@@ -233,6 +228,14 @@ public class Cena implements GLEventListener{
                 if(restoMargemDeErro != 0){
                     margemDeErroY += restoMargemDeErro;
                     extremidadeSuperiorYBolinha += restoMargemDeErro;
+                }
+            } else {
+                float pixeisAteBarra = (- 800) - extremidadeInferiorYBolinha;
+
+                float restoMargemDeErro = pixeisAteBarra % taxaAtualizacaoY;
+                if(restoMargemDeErro != 0){
+                    margemDeErroY += restoMargemDeErro;
+                    extremidadeInferiorYBolinha += restoMargemDeErro;
                 }
             }
 
