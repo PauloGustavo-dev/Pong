@@ -32,11 +32,28 @@ public class Cena implements GLEventListener{
     public int pontuacao = 0;
     public int fase= 1;
 
+    // Definindo Variávei para as cores de cada elemento da tela
     public int corSelecionada = 0;
-    public float vermelho = 1;
-    public float verde = 1;
-    public float azul = 1;
 
+    // Variáveis para a Bolinha
+    public float vermelhoBolinha = 1;
+    public float verdeBolinha = 1;
+    public float azulBolinha = 1;
+
+    // Variáveis para a Barra
+    public float vermelhoBarra = 1;
+    public float verdeBarra = 1;
+    public float azulBarra = 1;
+
+    // Variáveis para o Fundo
+    public float vermelhoFundo = 1;
+    public float verdeFundo = 1;
+    public float azulFundo = 1;
+
+    // Variáveis para a Borda
+    public float vermelhoBorda = 1;
+    public float verdeBorda = 1;
+    public float azulBorda = 1;
 
     public boolean menuPrincipalAtivado = true;
     public boolean jogoIniciado = false;
@@ -47,7 +64,7 @@ public class Cena implements GLEventListener{
 
     //Adicionando Variáveis para textura
 
-    public static final String texturaCoracao = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\texturas\\coracao_256.jpg";
+    public static final String texturaCoracao = "Pong/src/texturas/coracao_256.jpg";
 
     // Adicionando Variávies para o filtro da textura
     public int filtro = GL2.GL_LINEAR; ////GL_NEAREST ou GL_LINEAR
@@ -294,11 +311,12 @@ public class Cena implements GLEventListener{
                 translacaoXBolinha = 0;
                 translacaoYBolinha = 0;
                 gl.glTranslatef(0, -250, 0);
-                bolinha(gl,glut, vermelho, verde, azul);
+                bolinha(gl,glut, vermelhoBolinha, verdeBolinha, azulBolinha);
                 gl.glPopMatrix();
                 gerarTexto(gl, 275, 250, Color.white ,"Aperte espaço para começar/pausar o jogo");
         } else if (jogoIniciado && vidas != 0) {//começar os desenhos
-            bordas(gl,glut,vermelho,verde, azul);
+            bordas(gl,glut,vermelhoBorda,verdeBorda, azulBorda);
+            fundoJogo(gl,glut, vermelhoFundo, azulFundo, verdeFundo);
             corações(gl,glut);
             gerarTexto(gl, 800, 950, Color.white ,"Score");
             gerarTexto(gl, 800, 900, Color.white , String.valueOf(pontuacao));
@@ -306,10 +324,10 @@ public class Cena implements GLEventListener{
             gerarTexto(gl, 820, 800, Color.white , String.valueOf(fase));
 
             if (vidas!= 0) {
-                bolinha(gl, glut, vermelho, verde, azul);
+                bolinha(gl, glut, vermelhoBolinha, verdeBolinha, azulBolinha);
                 movimentarBolinha();
 
-                barra(gl, glut);
+                barra(gl, glut, vermelhoBarra, verdeBarra, azulBarra);
                 movimentarBarra();
 
                 if (fase >= 2) {
@@ -325,7 +343,7 @@ public class Cena implements GLEventListener{
 
         } else if (vidas == 0){
             menuGameOver = true;
-            gerarTexto(gl, 425, 500, Color.white ,"Game Over");
+            gerarTexto(gl, 425, 500, Color.red ,"Game Over");
             gerarTexto(gl, 275, 250, Color.white ,"Aperte  espaço  para  reiniciar !!");
         }
         gl.glFlush();
@@ -344,6 +362,21 @@ public class Cena implements GLEventListener{
         gl.glEnd();
         gl.glPopMatrix();
     }
+
+    public void fundoJogo(GL2 gl,GLUT glut, float r, float g, float b){
+        gl.glPushMatrix();
+        gl.glColor3f(r, g, b);
+        gl.glLineWidth(1f);
+        gl.glBegin(gl.GL_QUADS);
+        gl.glVertex2f(-975,975);
+        gl.glVertex2f(975,975);
+        gl.glVertex2f(975,-975);
+        gl.glVertex2f(-975,-975);
+        gl.glVertex2f(-975,975);
+        gl.glEnd();
+        gl.glPopMatrix();
+    }
+
     public void bolinha(GL2 gl,GLUT glut, float r, float g, float b){
         gl.glPushMatrix();
         gl.glTranslatef(translacaoXBolinha, translacaoYBolinha, 0);
@@ -354,7 +387,7 @@ public class Cena implements GLEventListener{
         gl.glPopMatrix();
     }
 
-    public void barra(GL2 gl, GLUT glut){
+    public void barra(GL2 gl, GLUT glut, float r, float g, float b){
         gl.glPushMatrix();
         gl.glTranslatef(0,-900,0);
         gl.glTranslatef(movimentacaoBarra,0,0);
@@ -362,7 +395,7 @@ public class Cena implements GLEventListener{
         for (int i = 0; i < 6 ; i++) {
             gl.glPushMatrix();
             gl.glTranslatef(x,0,0);
-            gl.glColor3f(0,0,1);
+            gl.glColor3f(r, g, b);
             glut.glutSolidCube(size);
             gl.glPopMatrix();
             x+=size;
