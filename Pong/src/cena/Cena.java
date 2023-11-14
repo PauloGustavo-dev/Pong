@@ -26,11 +26,12 @@ public class Cena implements GLEventListener{
     public float movimentacaoBarra=0;
     public float extremidadeDireitaBarra = size*3 , extremidadeEsquerdaBarra =extremidadeDireitaBarra -(size*6);
     public float posicaoYbarra = -900 ;
-    public final float tamanhoInicialObstaculo = 100;
-    public float tamanhoObstaculo =100;
     public int vidas = 5;
     public int pontuacao = 0;
     public int fase= 1;
+
+    public final float tamanhoInicialObstaculo = 100;
+    public float tamanhoObstaculo = tamanhoInicialObstaculo + (20 * (fase-1));
 
     public int corSelecionada = 0;
     // Variáveis para a Bolinha
@@ -77,17 +78,34 @@ public class Cena implements GLEventListener{
     public final float velocidadeMovimentoDaBarra = 50;
 
     public void resetarPosicaoInicialBolinha(){
-        translacaoYBolinha = 0;
-        extremidadeSuperiorYBolinha = size;
-        extremidadeInferiorYBolinha = - size;
-        taxaAtualizacaoY = - taxaAtualizacaoY;
+        if (fase>=2){
+            translacaoYBolinha = tamanhoObstaculo+ size;
+            extremidadeSuperiorYBolinha = translacaoYBolinha + size;
+            extremidadeInferiorYBolinha = translacaoYBolinha - size;
+            taxaAtualizacaoY = - taxaAtualizacaoY;
 
-        translacaoXBolinha = 0;
-        extremidadeDireitaXBolinha = size;
+            translacaoXBolinha = 0;
+            extremidadeDireitaXBolinha = size;
+
+            margemDeErroX=0;
+            margemDeErroY=0;
+        }else{
+            translacaoYBolinha = 0;
+            extremidadeSuperiorYBolinha = size;
+            extremidadeInferiorYBolinha = - size;
+            taxaAtualizacaoY = - taxaAtualizacaoY;
+
+            translacaoXBolinha = 0;
+            extremidadeDireitaXBolinha = size;
+
+            margemDeErroX=0;
+            margemDeErroY=0;
+        }
     }
     public void resetarJogo(){
         resetarPosicaoInicialBolinha();
         taxaAtualizacaoY = velocidadeInicialY;
+        taxaAtualizacaoX = velocidadeInicialX;
 
         movimentacaoBarra=0;
         extremidadeDireitaBarra = size*3;
@@ -99,53 +117,31 @@ public class Cena implements GLEventListener{
         fase= 1;
     }
     public void colisaoObstaculo(){
-        if(extremidadeDireitaXBolinha >= -tamanhoObstaculo/2 && extremidadeDireitaXBolinha <= tamanhoObstaculo/2){
-            if (extremidadeInferiorYBolinha <= tamanhoObstaculo/2 && extremidadeInferiorYBolinha >= (tamanhoObstaculo/2))// parte superior + margem de erro
+
+        if(extremidadeDireitaXBolinha >= -tamanhoObstaculo/2 && extremidadeEsquerdaXBolinha  <= tamanhoObstaculo/2){
+            if (extremidadeInferiorYBolinha  <= tamanhoObstaculo/2 && extremidadeInferiorYBolinha  >= tamanhoObstaculo/2 - 10 )// parte superior
             {
                 //taxa crescente, eixo y
                 taxaAtualizacaoY = velocidadeInicialY + (5 * (fase-1));
 
-                Random ran = new Random();
-                int aleatorizaAcressimoX = ran.nextInt(11);
                 if (taxaAtualizacaoX<0){
-                    taxaAtualizacaoX = -velocidadeInicialX - (5 * (fase-1));//pode aumentar velocidade a depender da fase
-                    taxaAtualizacaoX -= aleatorizaAcressimoX;
+                    taxaAtualizacaoX = -velocidadeInicialX - (5 * (fase-1));
                 } else {
-                    taxaAtualizacaoX = velocidadeInicialX + (5 * (fase - 1));//pode aumentar velocidade a depender da fase
-                    taxaAtualizacaoX += aleatorizaAcressimoX;
+                    taxaAtualizacaoX = velocidadeInicialX + (5 * (fase - 1));
                 }
-            } else if (extremidadeSuperiorYBolinha <= -tamanhoObstaculo/2 && extremidadeSuperiorYBolinha >= -((tamanhoObstaculo/2) + 20))// parte inferior + margem de erro
+            } else if (extremidadeSuperiorYBolinha >= - tamanhoObstaculo/2 && extremidadeSuperiorYBolinha <= - tamanhoObstaculo/2 + 10)// parte inferior
             {
                 //taxa decrescente, eixo y
                 taxaAtualizacaoY = -velocidadeInicialY - (5 * (fase-1));
 
-                Random ran = new Random();
-                int aleatorizaAcressimoX = ran.nextInt(11);
                 if (taxaAtualizacaoX<0){
-                    taxaAtualizacaoX = -velocidadeInicialX - (5 * (fase-1));//pode aumentar velocidade a depender da fase
-                    taxaAtualizacaoX -= aleatorizaAcressimoX;
+                    taxaAtualizacaoX = -velocidadeInicialX - (5 * (fase-1));
                 } else {
-                    taxaAtualizacaoX = velocidadeInicialX + (5 * (fase - 1));//pode aumentar velocidade a depender da fase
-                    taxaAtualizacaoX += aleatorizaAcressimoX;
+                    taxaAtualizacaoX = velocidadeInicialX + (5 * (fase - 1));
                 }
-            } else if (extremidadeInferiorYBolinha <= tamanhoObstaculo/2 && extremidadeInferiorYBolinha >= -tamanhoObstaculo/2)
+            } else if (extremidadeInferiorYBolinha <= tamanhoObstaculo/2 && extremidadeSuperiorYBolinha >= -tamanhoObstaculo/2)
             {
-                // eixo y
-                if (taxaAtualizacaoY<= 0){
-                    taxaAtualizacaoY = -velocidadeInicialY - (5 * (fase-1));
-                } else {
-                    taxaAtualizacaoY = velocidadeInicialY + (5 * (fase - 1));
-                }
-                Random ran = new Random();
-                int aleatorizaAcressimoX = ran.nextInt(11);
-                //se bater na lateral a bolinha vai para o lado oposto em relação ao eixo x
-                if (taxaAtualizacaoX < 0){
-                    taxaAtualizacaoX = velocidadeInicialX + (5 * (fase-1) );//pode aumentar velocidade a depender da fase
-                    taxaAtualizacaoX += aleatorizaAcressimoX;
-                } else {
-                    taxaAtualizacaoX = -velocidadeInicialX - (5 * (fase - 1));//pode aumentar velocidade a depender da fase
-                    taxaAtualizacaoX -= aleatorizaAcressimoX;
-                }
+                taxaAtualizacaoX = - taxaAtualizacaoX;
             }
         }
     }
@@ -213,6 +209,7 @@ public class Cena implements GLEventListener{
                 if(restoMargemDeErro != 0){
                     margemDeErroX += restoMargemDeErro;
                     extremidadeDireitaXBolinha += restoMargemDeErro;
+                    extremidadeEsquerdaXBolinha = extremidadeDireitaXBolinha - 100;
                 }
             }else{
                 float pixeisAteParede = - extremidadeJanela + extremidadeEsquerdaXBolinha;
@@ -220,6 +217,7 @@ public class Cena implements GLEventListener{
                 if(restoMargemDeErro != 0){
                     margemDeErroX -= restoMargemDeErro;
                     extremidadeDireitaXBolinha -= restoMargemDeErro;
+                    extremidadeEsquerdaXBolinha = extremidadeDireitaXBolinha - 100;
                 }
             }
             if(taxaAtualizacaoY>=0){
@@ -228,6 +226,7 @@ public class Cena implements GLEventListener{
                 if(restoMargemDeErro != 0){
                     margemDeErroY += restoMargemDeErro;
                     extremidadeSuperiorYBolinha += restoMargemDeErro;
+                    extremidadeInferiorYBolinha = extremidadeSuperiorYBolinha - 100;
                 }
             } else {
                 float pixeisAteBarra = (- 800) - extremidadeInferiorYBolinha;
@@ -236,6 +235,7 @@ public class Cena implements GLEventListener{
                 if(restoMargemDeErro != 0){
                     margemDeErroY += restoMargemDeErro;
                     extremidadeInferiorYBolinha += restoMargemDeErro;
+                    extremidadeSuperiorYBolinha = extremidadeInferiorYBolinha + 100;
                 }
             }
 
@@ -283,7 +283,6 @@ public class Cena implements GLEventListener{
     public void display(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
         GLUT glut = new GLUT();
-
 
         gl.glClearColor(0, 0, 0, 1);
 
@@ -398,7 +397,7 @@ public class Cena implements GLEventListener{
         gl.glPushMatrix();
         gl.glColor3f(1,1,1);
         tamanhoObstaculo = tamanhoInicialObstaculo + (20 * (fase-1));
-        glut.glutSolidSphere(tamanhoObstaculo/2,(int)tamanhoObstaculo,(int)tamanhoObstaculo);
+        glut.glutSolidCube(tamanhoObstaculo);
         gl.glPopMatrix();
     }
 
