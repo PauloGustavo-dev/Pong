@@ -32,9 +32,7 @@ public class Cena implements GLEventListener{
     public int pontuacao = 0;
     public int fase= 1;
 
-    // Definindo Variávei para as cores de cada elemento da tela
     public int corSelecionada = 0;
-
     // Variáveis para a Bolinha
     public float vermelhoBolinha = 1;
     public float verdeBolinha = 1;
@@ -55,6 +53,7 @@ public class Cena implements GLEventListener{
     public float verdeBorda = 1;
     public float azulBorda = 1;
 
+
     public boolean menuPrincipalAtivado = true;
     public boolean jogoIniciado = false;
     public boolean menuPausaAtivado = false;
@@ -64,7 +63,7 @@ public class Cena implements GLEventListener{
 
     //Adicionando Variáveis para textura
 
-    public static final String texturaCoracao = "Pong/src/texturas/coracao_256.jpg";
+    public static final String texturaCoracao = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\texturas\\coracao_256.jpg";
 
     // Adicionando Variávies para o filtro da textura
     public int filtro = GL2.GL_LINEAR; ////GL_NEAREST ou GL_LINEAR
@@ -77,6 +76,7 @@ public class Cena implements GLEventListener{
     public int mode;
     private float margemDeErroX;
     private float margemDeErroY;
+    public final float velocidadeMovimentoDaBarra = 50;
 
     public void resetarPosicaoInicialBolinha(){
         translacaoYBolinha = 0;
@@ -153,15 +153,7 @@ public class Cena implements GLEventListener{
     }
 
     public void movimentarBarra(){
-        //verifica a colisão da barra com a parede
 
-        if (movimentacaoBarra+ size*3 >= extremidadeJanela){
-            movimentacaoBarra = extremidadeJanela - size*3;
-            extremidadeDireitaBarra = extremidadeJanela;
-        }else if(movimentacaoBarra- size*3 <= - extremidadeJanela){
-            movimentacaoBarra = - extremidadeJanela + size*3;
-            extremidadeDireitaBarra = - extremidadeJanela + (size*6);
-        }
         //verifica colisao no eixo y
         if (extremidadeInferiorYBolinha <= posicaoYbarra && extremidadeInferiorYBolinha >= posicaoYbarra)// parte superior + margem de erro
         {
@@ -362,20 +354,20 @@ public class Cena implements GLEventListener{
         gl.glEnd();
         gl.glPopMatrix();
     }
-
-    public void fundoJogo(GL2 gl,GLUT glut, float r, float g, float b){
-        gl.glPushMatrix();
-        gl.glColor3f(r, g, b);
-        gl.glLineWidth(1f);
-        gl.glBegin(gl.GL_QUADS);
-        gl.glVertex2f(-975,975);
-        gl.glVertex2f(975,975);
-        gl.glVertex2f(975,-975);
-        gl.glVertex2f(-975,-975);
-        gl.glVertex2f(-975,975);
-        gl.glEnd();
-        gl.glPopMatrix();
-    }
+        public void fundoJogo(GL2 gl,GLUT glut, float r, float g, float b){
+            gl.glPushMatrix();
+            gl.glTranslatef(0,0,-100);
+            gl.glColor3f(r, g, b);
+            gl.glLineWidth(1f);
+            gl.glBegin(gl.GL_QUADS);
+            gl.glVertex2f(-975,975);
+            gl.glVertex2f(975,975);
+            gl.glVertex2f(975,-975);
+            gl.glVertex2f(-975,-975);
+            gl.glVertex2f(-975,975);
+            gl.glEnd();
+            gl.glPopMatrix();
+        }
 
     public void bolinha(GL2 gl,GLUT glut, float r, float g, float b){
         gl.glPushMatrix();
@@ -389,20 +381,14 @@ public class Cena implements GLEventListener{
 
     public void barra(GL2 gl, GLUT glut, float r, float g, float b){
         gl.glPushMatrix();
-        gl.glTranslatef(0,-900,0);
         gl.glTranslatef(movimentacaoBarra,0,0);
-        float x = (float) -(size*2.5);
-        for (int i = 0; i < 6 ; i++) {
-            gl.glPushMatrix();
-            gl.glTranslatef(x,0,0);
-            gl.glColor3f(r, g, b);
-            glut.glutSolidCube(size);
-            gl.glPopMatrix();
-            x+=size;
-        }
+        gl.glBegin(GL2.GL_POLYGON);
+            gl.glVertex2f(-150, -800);
+            gl.glVertex2f(150, -800);
+            gl.glVertex2f(150, -850);
+            gl.glVertex2f(-150, -850);
+        gl.glEnd();
         gl.glPopMatrix();
-        gl.glEnable(GL2.GL_LIGHTING);
-        gl.glEnable(GL2.GL_LIGHT1);
     }
 
     public void obstaculo(GL2 gl, GLUT glut){

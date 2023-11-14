@@ -10,9 +10,7 @@ public class KeyBoard implements KeyListener{
     }
     
     @Override
-    public void keyPressed(KeyEvent e) {        
-        System.out.println("Key pressed: " + e.getKeyCode());
-        System.out.println("Key pressed: " + e.getKeyChar());
+    public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
             System.exit(0);
         switch (e.getKeyChar()) {
@@ -20,20 +18,20 @@ public class KeyBoard implements KeyListener{
         }
 
         switch (e.getKeyCode()){
-            case 149://seta direita
-                cena.movimentacaoBarra-= 50;
-                cena.extremidadeDireitaBarra -= 50;
-                cena.extremidadeEsquerdaBarra =cena.extremidadeDireitaBarra -(cena.size*6);
+            case 151://seta direita
+                if (cena.movimentacaoBarra < cena.extremidadeJanela - 150) {
+                    cena.movimentacaoBarra += cena.velocidadeMovimentoDaBarra;
+                    cena.extremidadeDireitaBarra += cena.velocidadeMovimentoDaBarra;
+                    cena.extremidadeEsquerdaBarra = cena.extremidadeDireitaBarra - 300;
+                }
                 break;
-            case 151://seta esquerda
-                cena.movimentacaoBarra+= 50;
-                cena.extremidadeDireitaBarra += 50;
-                cena.extremidadeEsquerdaBarra =cena.extremidadeDireitaBarra -(cena.size*6);
+            case 149://seta esquerda
+                if (cena.movimentacaoBarra > - cena.extremidadeJanela + 150) {
+                    cena.movimentacaoBarra -= cena.velocidadeMovimentoDaBarra;
+                    cena.extremidadeDireitaBarra -= cena.velocidadeMovimentoDaBarra;
+                    cena.extremidadeEsquerdaBarra = cena.extremidadeDireitaBarra - 300;
+                }
                 break;
-//            case 150://seta cima
-//                break;
-//            case 152://seta baixo
-//                break;
             case 32://barra de espaço
 
                 if (cena.menuGameOver){
@@ -143,10 +141,7 @@ public class KeyBoard implements KeyListener{
 
     @Override
     public void keyReleased(KeyEvent e) {
-        //se a tecla for solta
-        System.out.println("Key released: " + e.getKeyCode());
-        if (e.getKeyChar() == 'a') { // Tecla a
-        }
+
     }
 
 }
