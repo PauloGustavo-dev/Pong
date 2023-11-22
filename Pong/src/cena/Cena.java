@@ -45,9 +45,9 @@ public class Cena implements GLEventListener{
     public float azulBarra = 1;
 
     // Variáveis para o Fundo
-    public float vermelhoFundo = 1;
-    public float verdeFundo = 1;
-    public float azulFundo = 1;
+    public float vermelhoFundo = 0.1f;
+    public float verdeFundo = 0.1f;
+    public float azulFundo = 0.1f;
 
     // Variáveis para a Borda
     public float vermelhoBorda = 1;
@@ -119,17 +119,22 @@ public class Cena implements GLEventListener{
     public void colisaoObstaculo(){
 
         if(extremidadeDireitaXBolinha >= -tamanhoObstaculo/2 && extremidadeEsquerdaXBolinha  <= tamanhoObstaculo/2){
-            if (extremidadeInferiorYBolinha  <= tamanhoObstaculo/2 && extremidadeInferiorYBolinha  >= tamanhoObstaculo/2 - 10 )// parte superior
+            if (extremidadeInferiorYBolinha  <= tamanhoObstaculo/2 && extremidadeInferiorYBolinha  >= tamanhoObstaculo/2 - (tamanhoObstaculo/4) )// parte superior
             {
                 //taxa crescente, eixo y
                 taxaAtualizacaoY = velocidadeInicialY + (5 * (fase-1));
 
+                Random ran = new Random();
+                int aleatorizaAcressimoX = ran.nextInt(11);// valor aleatorio de acrescimo para evitar que obstaculo entre em loop na parte superior
+
                 if (taxaAtualizacaoX<0){
                     taxaAtualizacaoX = -velocidadeInicialX - (5 * (fase-1));
+                    taxaAtualizacaoX -= aleatorizaAcressimoX;
                 } else {
                     taxaAtualizacaoX = velocidadeInicialX + (5 * (fase - 1));
+                    taxaAtualizacaoX += aleatorizaAcressimoX;
                 }
-            } else if (extremidadeSuperiorYBolinha >= - tamanhoObstaculo/2 && extremidadeSuperiorYBolinha <= - tamanhoObstaculo/2 + 10)// parte inferior
+            } else if (extremidadeSuperiorYBolinha >= - tamanhoObstaculo/2 && extremidadeSuperiorYBolinha <= - tamanhoObstaculo/2 + (tamanhoObstaculo/4))// parte inferior
             {
                 //taxa decrescente, eixo y
                 taxaAtualizacaoY = -velocidadeInicialY - (5 * (fase-1));
@@ -207,16 +212,16 @@ public class Cena implements GLEventListener{
                 float pixeisAteParede = extremidadeJanela - extremidadeDireitaXBolinha;
                 float restoMargemDeErro = pixeisAteParede % taxaAtualizacaoX;
                 if(restoMargemDeErro != 0){
-                    margemDeErroX += restoMargemDeErro;
-                    extremidadeDireitaXBolinha += restoMargemDeErro;
+                    margemDeErroX += 1;
+                    extremidadeDireitaXBolinha += 1;
                     extremidadeEsquerdaXBolinha = extremidadeDireitaXBolinha - 100;
                 }
             }else{
                 float pixeisAteParede = - extremidadeJanela + extremidadeEsquerdaXBolinha;
                 float restoMargemDeErro = pixeisAteParede % taxaAtualizacaoX;
                 if(restoMargemDeErro != 0){
-                    margemDeErroX -= restoMargemDeErro;
-                    extremidadeDireitaXBolinha -= restoMargemDeErro;
+                    margemDeErroX -= 1;
+                    extremidadeDireitaXBolinha -= 1;
                     extremidadeEsquerdaXBolinha = extremidadeDireitaXBolinha - 100;
                 }
             }
@@ -224,17 +229,16 @@ public class Cena implements GLEventListener{
                 float pixeisAteParede = extremidadeJanela - extremidadeSuperiorYBolinha;
                 float restoMargemDeErro = pixeisAteParede % taxaAtualizacaoY;
                 if(restoMargemDeErro != 0){
-                    margemDeErroY += restoMargemDeErro;
-                    extremidadeSuperiorYBolinha += restoMargemDeErro;
+                    margemDeErroY += 1;
+                    extremidadeSuperiorYBolinha += 1;
                     extremidadeInferiorYBolinha = extremidadeSuperiorYBolinha - 100;
                 }
             } else {
                 float pixeisAteBarra = (- 800) - extremidadeInferiorYBolinha;
-
                 float restoMargemDeErro = pixeisAteBarra % taxaAtualizacaoY;
                 if(restoMargemDeErro != 0){
-                    margemDeErroY += restoMargemDeErro;
-                    extremidadeInferiorYBolinha += restoMargemDeErro;
+                    margemDeErroY -= 1;
+                    extremidadeInferiorYBolinha -= 1;
                     extremidadeSuperiorYBolinha = extremidadeInferiorYBolinha + 100;
                 }
             }
@@ -397,7 +401,8 @@ public class Cena implements GLEventListener{
         gl.glPushMatrix();
         gl.glColor3f(1,1,1);
         tamanhoObstaculo = tamanhoInicialObstaculo + (20 * (fase-1));
-        glut.glutSolidCube(tamanhoObstaculo);
+        glut.glutSolidSphere(tamanhoObstaculo/2,(int)tamanhoObstaculo,(int)tamanhoObstaculo);
+//        glut.glutSolidCube(tamanhoObstaculo);
         gl.glPopMatrix();
     }
 
