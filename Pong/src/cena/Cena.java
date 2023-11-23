@@ -62,7 +62,7 @@ public class Cena implements GLEventListener{
 
     //Adicionando Variáveis para textura
 
-    public static final String texturaCoracao = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\texturas\\coracao_256.jpg";
+    public static final String texturaCoracao = "Pong/src/texturas/coracao_256.jpg";
 
     // Adicionando Variávies para o filtro da textura
     public int filtro = GL2.GL_LINEAR; ////GL_NEAREST ou GL_LINEAR
@@ -71,6 +71,9 @@ public class Cena implements GLEventListener{
 
     // Importação da Classe "Textura.java"
     private Textura textura;
+
+    //Criando variável para record
+    private int record = 0;
 
     public int mode;
     private float margemDeErroX;
@@ -340,9 +343,14 @@ public class Cena implements GLEventListener{
                 gerarTexto(gl, 580, 190, Color.red ,"(Perderá o Progresso!)");
 
         } else if (vidas == 0){
+            if (pontuacao > record){
+                record = pontuacao;
+            }
             menuGameOver = true;
-            gerarTexto(gl, 425, 500, Color.red ,"Game Over");
-            gerarTexto(gl, 275, 250, Color.white ,"Aperte  espaço  para  reiniciar !!");
+            gerarTexto(gl, 525, 500, Color.red ,"Game Over");
+            gerarTexto(gl, 425, 500, Color.red, "Sua pontuação foi de: " + pontuacao);
+            gerarTexto(gl, 325, 500, Color.red, "Seu Record foi de: " + record);
+            gerarTexto(gl, 250, 250, Color.white ,"Aperte  espaço  para  reiniciar !!");
         }
         gl.glFlush();
     }
