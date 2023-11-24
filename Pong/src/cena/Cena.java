@@ -64,6 +64,8 @@ public class Cena implements GLEventListener{
 
     public static final String texturaCoracao = "Pong/src/texturas/coracao_256.jpg";
 
+    public static final String texturaEspaco = "Pong/src/texturas/espaço.png";
+
     // Adicionando Variávies para o filtro da textura
     public int filtro = GL2.GL_LINEAR; ////GL_NEAREST ou GL_LINEAR
     public int wrap = GL2.GL_REPEAT;  //GL.GL_REPEAT ou GL.GL_CLAMP
@@ -267,7 +269,7 @@ public class Cena implements GLEventListener{
         //dados iniciais da cena
         GL2 gl = drawable.getGL().getGL2();
         //Estabelece as coordenadas do SRU (Sistema de Referencia do Universo)
-//        xMin = yMin = zMin = -extremidadeJanela;
+//        xMin = yMin = zMin = extremidadeJanela;
 //        xMax = yMax = zMax = extremidadeJanela;
         xMin = -Renderer.screenWidth;
         xMax = Renderer.screenWidth;
@@ -280,10 +282,12 @@ public class Cena implements GLEventListener{
         textRenderer = new TextRenderer(new Font("Serif", Font.BOLD, 30));
 
         //Configura a Textura
-        textura = new Textura(5 );
+        textura = new Textura(6 );
 
         //Habilita o buffer de profundidade
         gl.glEnable(GL2.GL_DEPTH_TEST);
+
+
     }
 
     @Override
@@ -300,6 +304,29 @@ public class Cena implements GLEventListener{
 
         iluminacaoDifusa(gl);
         ligarLuz(gl);
+
+        textura.setAutomatica(false);
+
+        textura.setFiltro(filtro);
+        textura.setModo(modo);
+        textura.setWrap(wrap);
+
+
+        textura.gerarTextura(gl, texturaEspaco, 5);
+
+        gl.glBegin(GL2.GL_QUADS);
+            gl.glTexCoord2f(1f, 1f);
+            gl.glVertex3f(Renderer.screenWidth, Renderer.screenHeight, -100f);
+            gl.glTexCoord2f(1f, 0.0f);
+            gl.glVertex3f(Renderer.screenWidth, -Renderer.screenHeight, -100f);
+            gl.glTexCoord2f(0.0f, 0.0f);
+            gl.glVertex3f(-Renderer.screenWidth, -Renderer.screenHeight, -100f);
+            gl.glTexCoord2f(0.0f, 1f);
+            gl.glVertex3f(-Renderer.screenWidth, Renderer.screenHeight, -100f);
+        gl.glEnd();
+
+        textura.desabilitarTextura(gl, 5);
+
 
         if (menuPrincipalAtivado){
                 gerarTexto(gl, 450, 850, Color.white ,"PONG");
