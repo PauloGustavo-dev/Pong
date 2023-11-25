@@ -66,6 +66,8 @@ public class Cena implements GLEventListener{
 
     public static final String texturaEspaco = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\img_texturas\\espaço.png";
 
+    public static final String texturaBarra = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\img_texturas\\nave.png";
+
     // Adicionando Variávies para o filtro da textura
     public int filtro = GL2.GL_LINEAR; ////GL_NEAREST ou GL_LINEAR
     public int wrap = GL2.GL_REPEAT;  //GL.GL_REPEAT ou GL.GL_CLAMP
@@ -282,7 +284,7 @@ public class Cena implements GLEventListener{
         textRenderer = new TextRenderer(new Font("Serif", Font.BOLD, 30));
 
         //Configura a Textura
-        textura = new Textura(6 );
+        textura = new Textura(7 );
 
         //Habilita o buffer de profundidade
         gl.glEnable(GL2.GL_DEPTH_TEST);
@@ -423,12 +425,26 @@ public class Cena implements GLEventListener{
     public void barra(GL2 gl, GLUT glut, float r, float g, float b){
         gl.glPushMatrix();
         gl.glTranslatef(movimentacaoBarra,0,0);
-        gl.glBegin(GL2.GL_POLYGON);
-            gl.glVertex2f(-150, -800);
-            gl.glVertex2f(150, -800);
-            gl.glVertex2f(150, -850);
-            gl.glVertex2f(-150, -850);
+
+        textura.setAutomatica(false);
+        textura.setFiltro(filtro);
+        textura.setModo(modo);
+        textura.setWrap(wrap);
+        textura.gerarTextura(gl, texturaBarra, 6);
+
+        gl.glBegin(GL2.GL_QUADS);
+        gl.glTexCoord2f(1f, 1f);
+        gl.glVertex3f(150, -800, 10f);
+        gl.glTexCoord2f(1f, 0.0f);
+        gl.glVertex3f(150, -850, -100f);
+        gl.glTexCoord2f(0.0f, 0.0f);
+        gl.glVertex3f(-150, -850, -100f);
+        gl.glTexCoord2f(0.0f, 1f);
+        gl.glVertex3f(-150, -800, -100f);
         gl.glEnd();
+
+        textura.desabilitarTextura(gl, 6);
+
         gl.glPopMatrix();
 
     }
