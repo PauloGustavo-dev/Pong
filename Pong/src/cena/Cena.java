@@ -64,7 +64,7 @@ public class Cena implements GLEventListener{
 
     public static final String texturaCoracao = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\img_texturas\\coração.png";
 
-    public static final String texturaEspaco = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\img_texturas\\espaço.png";
+    public static final String texturaEspaco = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\img_texturas\\espaço2.png";
 
     public static final String texturaBarra = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\img_texturas\\nave.png";
 
@@ -83,6 +83,8 @@ public class Cena implements GLEventListener{
     private float margemDeErroX;
     private float margemDeErroY;
     public final float velocidadeMovimentoDaBarra = 50;
+    private float movimentoFundo =1;
+    private float velocidadaAnimacaoDeFundo = 0.001f;
 
     public void resetarPosicaoInicialBolinha(){
         if (fase>=2){
@@ -307,27 +309,10 @@ public class Cena implements GLEventListener{
         iluminacaoDifusa(gl);
         ligarLuz(gl);
 
-        textura.setAutomatica(false);
-
-        textura.setFiltro(filtro);
-        textura.setModo(modo);
-        textura.setWrap(wrap);
-
-
-        textura.gerarTextura(gl, texturaEspaco, 5);
-
-        gl.glBegin(GL2.GL_QUADS);
-            gl.glTexCoord2f(1f, 1f);
-            gl.glVertex3f(Renderer.screenWidth, Renderer.screenHeight, -100f);
-            gl.glTexCoord2f(1f, 0.0f);
-            gl.glVertex3f(Renderer.screenWidth, -Renderer.screenHeight, -100f);
-            gl.glTexCoord2f(0.0f, 0.0f);
-            gl.glVertex3f(-Renderer.screenWidth, -Renderer.screenHeight, -100f);
-            gl.glTexCoord2f(0.0f, 1f);
-            gl.glVertex3f(-Renderer.screenWidth, Renderer.screenHeight, -100f);
-        gl.glEnd();
-
-        textura.desabilitarTextura(gl, 5);
+        planoDeFundo(gl);
+        movimentoFundo += velocidadaAnimacaoDeFundo;
+        if(movimentoFundo==2){movimentoFundo=-velocidadaAnimacaoDeFundo;}
+        else if(movimentoFundo==1){movimentoFundo=-velocidadaAnimacaoDeFundo;}
 
 
         if (menuPrincipalAtivado){
@@ -396,6 +381,32 @@ public class Cena implements GLEventListener{
             gl.glVertex2f(-1000,1000);
         gl.glEnd();
         gl.glPopMatrix();
+    }
+    public void planoDeFundo(GL2 gl){
+        gl.glEnable(GL2.GL_DEPTH_TEST);
+
+        textura.setAutomatica(false);
+
+        textura.setFiltro(filtro);
+        textura.setModo(modo);
+        textura.setWrap(wrap);
+
+
+        textura.gerarTextura(gl, texturaEspaco, 5);
+        gl.glColor3f(vermelhoFundo, azulFundo, verdeFundo);
+
+        gl.glBegin(GL2.GL_QUADS);
+        gl.glTexCoord2f(movimentoFundo, movimentoFundo);
+        gl.glVertex3f(Renderer.screenWidth, Renderer.screenHeight, -100f);
+        gl.glTexCoord2f(movimentoFundo, 0.0f);
+        gl.glVertex3f(Renderer.screenWidth, -Renderer.screenHeight, -100f);
+        gl.glTexCoord2f(0.0f, 0.0f);
+        gl.glVertex3f(-Renderer.screenWidth, -Renderer.screenHeight, -100f);
+        gl.glTexCoord2f(0.0f, movimentoFundo);
+        gl.glVertex3f(-Renderer.screenWidth, Renderer.screenHeight, -100f);
+        gl.glEnd();
+
+        textura.desabilitarTextura(gl, 5);
     }
         public void fundoJogo(GL2 gl,GLUT glut, float r, float g, float b){
             gl.glPushMatrix();
