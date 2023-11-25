@@ -62,9 +62,9 @@ public class Cena implements GLEventListener{
 
     //Adicionando Variáveis para textura
 
-    public static final String texturaCoracao = "Pong/src/texturas/coracao_256.jpg";
+    public static final String texturaCoracao = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\img_texturas\\coração.png";
 
-    public static final String texturaEspaco = "Pong/src/texturas/espaço.png";
+    public static final String texturaEspaco = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\img_texturas\\espaço.png";
 
     // Adicionando Variávies para o filtro da textura
     public int filtro = GL2.GL_LINEAR; ////GL_NEAREST ou GL_LINEAR
@@ -431,8 +431,6 @@ public class Cena implements GLEventListener{
         gl.glEnd();
         gl.glPopMatrix();
 
-        iluminacaoAmbiente(gl);
-        acenderLuz(gl);
     }
 
     public void obstaculo(GL2 gl, GLUT glut){
@@ -460,6 +458,7 @@ public class Cena implements GLEventListener{
             //cria a textura indicando o local da imagem e o índice
 //            gl.glEnable(GL2.GL_TEXTURE_2D);
             textura.gerarTextura(gl, texturaCoracao, 0);
+            gl.glColor3f(vermelhoFundo, azulFundo, verdeFundo);
             // Criando a face para o Primeiro Coração
             gl.glBegin(GL2.GL_QUADS);
             //coordenadas da Textura            //coordenadas do quads
@@ -493,6 +492,7 @@ public class Cena implements GLEventListener{
 
             //cria a textura indicando o local da imagem e o índice
             textura.gerarTextura(gl, texturaCoracao, 1);
+            gl.glColor3f(vermelhoFundo, azulFundo, verdeFundo);
             // Criando a face para o segundo Coração
             gl.glBegin(GL2.GL_QUADS);
             //coordenadas da Textura            //coordenadas do quads
@@ -526,6 +526,7 @@ public class Cena implements GLEventListener{
 
             //cria a textura indicando o local da imagem e o índice
             textura.gerarTextura(gl, texturaCoracao, 2);
+            gl.glColor3f(vermelhoFundo, azulFundo, verdeFundo);
             gl.glBegin(GL2.GL_QUADS);
             //coordenadas da Textura            //coordenadas do quads
             gl.glTexCoord2f(1f, 1f);
@@ -562,6 +563,7 @@ public class Cena implements GLEventListener{
 
             //cria a textura indicando o local da imagem e o índice
             textura.gerarTextura(gl, texturaCoracao, 3);
+            gl.glColor3f(vermelhoFundo, azulFundo, verdeFundo);
             // Criando a face para o quarto Coração
             gl.glBegin(GL2.GL_QUADS);
             //coordenadas da Textura            //coordenadas do quads
@@ -594,6 +596,7 @@ public class Cena implements GLEventListener{
 
             //cria a textura indicando o local da imagem e o índice
             textura.gerarTextura(gl, texturaCoracao, 4);
+            gl.glColor3f(vermelhoFundo, azulFundo, verdeFundo);
             // Criando a face para o quinto Coração
             gl.glBegin(GL2.GL_QUADS);
             //coordenadas da Textura            //coordenadas do quads
@@ -611,9 +614,6 @@ public class Cena implements GLEventListener{
             textura.desabilitarTextura(gl, 4);
 //            gl.glDisable(GL2.GL_TEXTURE_2D);
         }
-
-
-
     }
 
 
@@ -636,22 +636,6 @@ public class Cena implements GLEventListener{
     }
 
     public void ligarLuz(GL2 gl) {
-        gl.glEnable(GL2.GL_COLOR_MATERIAL);
-        gl.glEnable(GL2.GL_LIGHTING);
-        gl.glEnable(GL2.GL_LIGHT0);
-        gl.glShadeModel(GL2.GL_SMOOTH);
-    }
-
-    public void iluminacaoAmbiente(GL2 gl) {
-        float luzAmbiente[] = {1.0f, 1.0f, 1.0f, 1.0f};
-        float posicaoLuz[] = {50.0f, -50.0f, 100.0f, 1.0f};
-
-        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, luzAmbiente, 0);
-        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, posicaoLuz, 0);
-    }
-
-    public void acenderLuz(GL2 gl) {
-
         gl.glEnable(GL2.GL_COLOR_MATERIAL);
         gl.glEnable(GL2.GL_LIGHTING);
         gl.glEnable(GL2.GL_LIGHT0);
