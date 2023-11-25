@@ -68,6 +68,8 @@ public class Cena implements GLEventListener{
 
     public static final String texturaBarra = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\img_texturas\\nave.png";
 
+    public static final String texturaPropulsor = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\img_texturas\\propulsor.png";
+
     // Adicionando Variávies para o filtro da textura
     public int filtro = GL2.GL_LINEAR; ////GL_NEAREST ou GL_LINEAR
     public int wrap = GL2.GL_REPEAT;  //GL.GL_REPEAT ou GL.GL_CLAMP
@@ -83,7 +85,7 @@ public class Cena implements GLEventListener{
     private float margemDeErroX;
     private float margemDeErroY;
     public final float velocidadeMovimentoDaBarra = 50;
-    private float movimentoFundo =1;
+    private float movimentoFundo =1.5f;
     private float velocidadaAnimacaoDeFundo = 0.001f;
 
     public void resetarPosicaoInicialBolinha(){
@@ -286,7 +288,7 @@ public class Cena implements GLEventListener{
         textRenderer = new TextRenderer(new Font("Serif", Font.BOLD, 30));
 
         //Configura a Textura
-        textura = new Textura(7 );
+        textura = new Textura(8 );
 
         //Habilita o buffer de profundidade
         gl.glEnable(GL2.GL_DEPTH_TEST);
@@ -311,8 +313,8 @@ public class Cena implements GLEventListener{
 
         planoDeFundo(gl);
         movimentoFundo += velocidadaAnimacaoDeFundo;
-        if(movimentoFundo==2){movimentoFundo=-velocidadaAnimacaoDeFundo;}
-        else if(movimentoFundo==1){movimentoFundo=-velocidadaAnimacaoDeFundo;}
+        if(movimentoFundo==2.5f){movimentoFundo=-velocidadaAnimacaoDeFundo;}
+        else if(movimentoFundo==1.5f){movimentoFundo=-velocidadaAnimacaoDeFundo;}
 
 
         if (menuPrincipalAtivado){
@@ -455,6 +457,26 @@ public class Cena implements GLEventListener{
         gl.glEnd();
 
         textura.desabilitarTextura(gl, 6);
+        gl.glColor3f(vermelhoFundo,verdeFundo,azulFundo);
+
+        textura.setAutomatica(false);
+        textura.setFiltro(filtro);
+        textura.setModo(modo);
+        textura.setWrap(wrap);
+        textura.gerarTextura(gl, texturaPropulsor, 7);
+
+        gl.glBegin(GL2.GL_QUADS);
+        gl.glTexCoord2f(1f, 1f);
+        gl.glVertex3f(150, -850, 10f);
+        gl.glTexCoord2f(1f, 0.0f);
+        gl.glVertex3f(150, -1000, -100f);
+        gl.glTexCoord2f(0.0f, 0.0f);
+        gl.glVertex3f(-150, -1000, -100f);
+        gl.glTexCoord2f(0.0f, 1f);
+        gl.glVertex3f(-150, -850, -100f);
+        gl.glEnd();
+
+        textura.desabilitarTextura(gl, 7);
 
         gl.glPopMatrix();
 
