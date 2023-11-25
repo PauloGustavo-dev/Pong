@@ -430,6 +430,9 @@ public class Cena implements GLEventListener{
             gl.glVertex2f(-150, -850);
         gl.glEnd();
         gl.glPopMatrix();
+
+        iluminacaoAmbiente(gl);
+        acenderLuz(gl);
     }
 
     public void obstaculo(GL2 gl, GLUT glut){
@@ -633,6 +636,22 @@ public class Cena implements GLEventListener{
     }
 
     public void ligarLuz(GL2 gl) {
+        gl.glEnable(GL2.GL_COLOR_MATERIAL);
+        gl.glEnable(GL2.GL_LIGHTING);
+        gl.glEnable(GL2.GL_LIGHT0);
+        gl.glShadeModel(GL2.GL_SMOOTH);
+    }
+
+    public void iluminacaoAmbiente(GL2 gl) {
+        float luzAmbiente[] = {1.0f, 1.0f, 1.0f, 1.0f};
+        float posicaoLuz[] = {50.0f, -50.0f, 100.0f, 1.0f};
+
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, luzAmbiente, 0);
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, posicaoLuz, 0);
+    }
+
+    public void acenderLuz(GL2 gl) {
+
         gl.glEnable(GL2.GL_COLOR_MATERIAL);
         gl.glEnable(GL2.GL_LIGHTING);
         gl.glEnable(GL2.GL_LIGHT0);
