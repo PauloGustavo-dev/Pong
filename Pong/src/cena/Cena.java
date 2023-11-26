@@ -89,6 +89,7 @@ public class Cena implements GLEventListener{
     private float velocidadaAnimacaoDeFundo = 0.001f;
     private float movimentacaoLaser = 0;
     private float velocidadeLaser = 0.05f;
+    private final int numeroDeFases = 5;
 
     public void resetarPosicaoInicialBolinha(){
         if (fase>=2){
@@ -171,7 +172,7 @@ public class Cena implements GLEventListener{
             if (extremidadeInferiorYBolinha == -800f)
             {
                 pontuacao+=50;
-                fase = (pontuacao/200)+1;
+                if (fase<=numeroDeFases){fase = (pontuacao/200)+1;}
 
                 //taxa crescente, eixo y
                 taxaAtualizacaoY = velocidadeInicialY + (5 * (fase-1));
@@ -191,7 +192,7 @@ public class Cena implements GLEventListener{
             {
                 pontuacao+=50;
 
-                fase = (pontuacao/200)+1;
+                if (fase<=numeroDeFases){fase = (pontuacao/200)+1;}
 
                 //taxa crescente, eixo y
                 taxaAtualizacaoY = velocidadeInicialY + (5 * (fase-1));
@@ -208,7 +209,6 @@ public class Cena implements GLEventListener{
                 }
             }
         }
-
     }
 
     public void movimentarBolinha(){
@@ -294,8 +294,6 @@ public class Cena implements GLEventListener{
 
         //Habilita o buffer de profundidade
         gl.glEnable(GL2.GL_DEPTH_TEST);
-
-
     }
 
     @Override
@@ -315,9 +313,8 @@ public class Cena implements GLEventListener{
 
         planoDeFundo(gl);
         movimentoFundo += velocidadaAnimacaoDeFundo;
-        if(movimentoFundo==2.5f){movimentoFundo=-velocidadaAnimacaoDeFundo;}
-        else if(movimentoFundo==1.5f){movimentoFundo=-velocidadaAnimacaoDeFundo;}
-
+        if(movimentoFundo>=1.8f){velocidadaAnimacaoDeFundo=-velocidadaAnimacaoDeFundo;}
+        else if(movimentoFundo<=1.5f){velocidadaAnimacaoDeFundo=-velocidadaAnimacaoDeFundo;}
 
         if (menuPrincipalAtivado){
                 gerarTexto(gl, 450, 850, Color.white ,"PONG");
