@@ -44,11 +44,6 @@ public class Cena implements GLEventListener{
     public float verdeBarra = 1;
     public float azulBarra = 1;
 
-    // Variáveis para o Fundo
-    public float vermelhoFundo = 0.1f;
-    public float verdeFundo = 0.1f;
-    public float azulFundo = 0.1f;
-
     // Variáveis para a Borda
     public float vermelhoBorda = 1;
     public float verdeBorda = 1;
@@ -62,13 +57,13 @@ public class Cena implements GLEventListener{
 
     //Adicionando Variáveis para textura
 
-    public static final String texturaCoracao = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\img_texturas\\coração.png";
+    public static final String texturaCoracao = "Pong/src/img_texturas/coração.png";
 
-    public static final String texturaEspaco = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\img_texturas\\espaço2.png";
+    public static final String texturaEspaco = "Pong/src/img_texturas/espaço2.jpg";
 
-    public static final String texturaBarra = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\img_texturas\\nave.png";
+    public static final String texturaBarra = "Pong/src/img_texturas/nave.png";
 
-    public static final String texturaPropulsor = "C:\\Users\\paulo\\Documents\\Projeto-A3\\Pong\\Pong\\src\\img_texturas\\propulsor.png";
+    public static final String texturaPropulsor = "Pong/src/img_texturas/propulsor.png";
 
     // Adicionando Variávies para o filtro da textura
     public int filtro = GL2.GL_LINEAR; ////GL_NEAREST ou GL_LINEAR
@@ -332,7 +327,6 @@ public class Cena implements GLEventListener{
                 gerarTexto(gl, 275, 250, Color.white ,"Aperte espaço para começar/pausar o jogo");
         } else if (jogoIniciado && vidas != 0) {//começar os desenhos
             bordas(gl,glut,vermelhoBorda,verdeBorda, azulBorda);
-            fundoJogo(gl,glut, vermelhoFundo, azulFundo, verdeFundo);
             corações(gl,glut);
             gerarTexto(gl, 800, 950, Color.white ,"Score");
             gerarTexto(gl, 800, 900, Color.white , String.valueOf(pontuacao));
@@ -362,10 +356,10 @@ public class Cena implements GLEventListener{
                 record = pontuacao;
             }
             menuGameOver = true;
-            gerarTexto(gl, 525, 500, Color.red ,"Game Over");
-            gerarTexto(gl, 425, 500, Color.red, "Sua pontuação foi de: " + pontuacao);
-            gerarTexto(gl, 325, 500, Color.red, "Seu Record foi de: " + record);
-            gerarTexto(gl, 250, 250, Color.white ,"Aperte  espaço  para  reiniciar !!");
+            gerarTexto(gl, 500, 500, Color.red ,"Game Over");
+            gerarTexto(gl, 500, 400, Color.red, "Sua pontuação foi de: " + pontuacao);
+            gerarTexto(gl, 500, 300, Color.red, "Seu Record foi de: " + record);
+            gerarTexto(gl, 500, 250, Color.white ,"Aperte  espaço  para  reiniciar !!");
         }
         gl.glFlush();
     }
@@ -394,7 +388,6 @@ public class Cena implements GLEventListener{
 
 
         textura.gerarTextura(gl, texturaEspaco, 5);
-        gl.glColor3f(vermelhoFundo, azulFundo, verdeFundo);
 
         gl.glBegin(GL2.GL_QUADS);
         gl.glTexCoord2f(movimentoFundo, movimentoFundo);
@@ -409,20 +402,6 @@ public class Cena implements GLEventListener{
 
         textura.desabilitarTextura(gl, 5);
     }
-        public void fundoJogo(GL2 gl,GLUT glut, float r, float g, float b){
-            gl.glPushMatrix();
-            gl.glTranslatef(0,0,-100);
-            gl.glColor3f(r, g, b);
-            gl.glLineWidth(1f);
-            gl.glBegin(gl.GL_QUADS);
-            gl.glVertex2f(-975,975);
-            gl.glVertex2f(975,975);
-            gl.glVertex2f(975,-975);
-            gl.glVertex2f(-975,-975);
-            gl.glVertex2f(-975,975);
-            gl.glEnd();
-            gl.glPopMatrix();
-        }
 
     public void bolinha(GL2 gl,GLUT glut, float r, float g, float b){
         gl.glPushMatrix();
@@ -456,9 +435,8 @@ public class Cena implements GLEventListener{
         gl.glEnd();
 
         textura.desabilitarTextura(gl, 6);
-        gl.glColor3f(vermelhoFundo,verdeFundo,azulFundo);
-
         textura.setAutomatica(false);
+        gl.glColor3f(0,0,0);
         textura.setFiltro(filtro);
         textura.setModo(modo);
         textura.setWrap(gl.GL_CLAMP_TO_BORDER);
@@ -495,7 +473,7 @@ public class Cena implements GLEventListener{
 
     public void corações(GL2 gl, GLUT glut){
         gl.glEnable(GL2.GL_DEPTH_TEST);
-
+        gl.glColor3f(0,0,0);
         if (vidas>=1) {
             // Textura para o primeiro coração:
 
@@ -509,7 +487,6 @@ public class Cena implements GLEventListener{
             //cria a textura indicando o local da imagem e o índice
 //            gl.glEnable(GL2.GL_TEXTURE_2D);
             textura.gerarTextura(gl, texturaCoracao, 0);
-            gl.glColor3f(vermelhoFundo, azulFundo, verdeFundo);
             // Criando a face para o Primeiro Coração
             gl.glBegin(GL2.GL_QUADS);
             //coordenadas da Textura            //coordenadas do quads
@@ -543,7 +520,6 @@ public class Cena implements GLEventListener{
 
             //cria a textura indicando o local da imagem e o índice
             textura.gerarTextura(gl, texturaCoracao, 1);
-            gl.glColor3f(vermelhoFundo, azulFundo, verdeFundo);
             // Criando a face para o segundo Coração
             gl.glBegin(GL2.GL_QUADS);
             //coordenadas da Textura            //coordenadas do quads
@@ -577,7 +553,6 @@ public class Cena implements GLEventListener{
 
             //cria a textura indicando o local da imagem e o índice
             textura.gerarTextura(gl, texturaCoracao, 2);
-            gl.glColor3f(vermelhoFundo, azulFundo, verdeFundo);
             gl.glBegin(GL2.GL_QUADS);
             //coordenadas da Textura            //coordenadas do quads
             gl.glTexCoord2f(1f, 1f);
@@ -614,7 +589,6 @@ public class Cena implements GLEventListener{
 
             //cria a textura indicando o local da imagem e o índice
             textura.gerarTextura(gl, texturaCoracao, 3);
-            gl.glColor3f(vermelhoFundo, azulFundo, verdeFundo);
             // Criando a face para o quarto Coração
             gl.glBegin(GL2.GL_QUADS);
             //coordenadas da Textura            //coordenadas do quads
@@ -647,7 +621,6 @@ public class Cena implements GLEventListener{
 
             //cria a textura indicando o local da imagem e o índice
             textura.gerarTextura(gl, texturaCoracao, 4);
-            gl.glColor3f(vermelhoFundo, azulFundo, verdeFundo);
             // Criando a face para o quinto Coração
             gl.glBegin(GL2.GL_QUADS);
             //coordenadas da Textura            //coordenadas do quads
