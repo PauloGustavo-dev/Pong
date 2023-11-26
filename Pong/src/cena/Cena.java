@@ -87,6 +87,8 @@ public class Cena implements GLEventListener{
     public final float velocidadeMovimentoDaBarra = 50;
     private float movimentoFundo =1.5f;
     private float velocidadaAnimacaoDeFundo = 0.001f;
+    private float movimentacaoLaser = 0;
+    private float velocidadeLaser = 0.05f;
 
     public void resetarPosicaoInicialBolinha(){
         if (fase>=2){
@@ -462,23 +464,26 @@ public class Cena implements GLEventListener{
         textura.setAutomatica(false);
         textura.setFiltro(filtro);
         textura.setModo(modo);
-        textura.setWrap(wrap);
+        textura.setWrap(gl.GL_CLAMP_TO_BORDER);
         textura.gerarTextura(gl, texturaPropulsor, 7);
 
         gl.glBegin(GL2.GL_QUADS);
         gl.glTexCoord2f(1f, 1f);
         gl.glVertex3f(150, -850, 10f);
-        gl.glTexCoord2f(1f, 0.0f);
+        gl.glTexCoord2f(movimentacaoLaser+1 , -movimentacaoLaser);
         gl.glVertex3f(150, -1000, -100f);
-        gl.glTexCoord2f(0.0f, 0.0f);
+        gl.glTexCoord2f(-movimentacaoLaser-0.08f, -movimentacaoLaser);
         gl.glVertex3f(-150, -1000, -100f);
-        gl.glTexCoord2f(0.0f, 1f);
+        gl.glTexCoord2f(0f, 1f);
         gl.glVertex3f(-150, -850, -100f);
         gl.glEnd();
 
         textura.desabilitarTextura(gl, 7);
 
         gl.glPopMatrix();
+        movimentacaoLaser-=velocidadeLaser;
+        if (movimentacaoLaser<=-0.2f){velocidadeLaser= -velocidadeLaser;}
+        else if (movimentacaoLaser >= 0.1) {velocidadeLaser= -velocidadeLaser;}
 
     }
 
