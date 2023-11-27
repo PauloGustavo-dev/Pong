@@ -25,7 +25,6 @@ public class Cena implements GLEventListener{
     public float taxaAtualizacaoX =20f , taxaAtualizacaoY =15f;
     public float movimentacaoBarra=0;
     public float extremidadeDireitaBarra = size*3 , extremidadeEsquerdaBarra =extremidadeDireitaBarra -(size*6);
-    public float posicaoYbarra = -900 ;
     public int vidas = 5;
     public int pontuacao = 0;
     public int fase= 1;
@@ -48,7 +47,6 @@ public class Cena implements GLEventListener{
     public float vermelhoBorda = 1;
     public float verdeBorda = 1;
     public float azulBorda = 1;
-
 
     public boolean menuPrincipalAtivado = true;
     public boolean jogoIniciado = false;
@@ -84,7 +82,9 @@ public class Cena implements GLEventListener{
     private float velocidadaAnimacaoDeFundo = 0.001f;
     private float movimentacaoLaser = 0;
     private float velocidadeLaser = 0.05f;
-    private final int numeroDeFases = 5;
+    private final int numeroDeFases = 4;
+
+    private boolean rangeObstaculo = false;
 
     public void resetarPosicaoInicialBolinha(){
         if (fase>=2){
@@ -126,6 +126,48 @@ public class Cena implements GLEventListener{
         fase= 1;
     }
     public void colisaoObstaculo(){
+        //criando range onde será analisado margem de erro para colisão 100% com o obstaculo
+        if(extremidadeDireitaXBolinha >= -tamanhoObstaculo*3 && extremidadeEsquerdaXBolinha  <= tamanhoObstaculo*3
+        && extremidadeInferiorYBolinha >= -tamanhoObstaculo*3 && extremidadeSuperiorYBolinha  <= tamanhoObstaculo*3){
+            rangeObstaculo= true;
+        }else{rangeObstaculo=false;}
+
+        if(rangeObstaculo){
+            if(taxaAtualizacaoX>= 0){
+                float pixeisAteObstaculo = (-tamanhoObstaculo/2) - extremidadeDireitaXBolinha;
+                float restoMargemDeErro = pixeisAteObstaculo % taxaAtualizacaoX;
+                if(restoMargemDeErro != 0){
+                    margemDeErroX += 1;
+                    extremidadeDireitaXBolinha += 1;
+                    extremidadeEsquerdaXBolinha = extremidadeDireitaXBolinha - 100;
+                }
+            }else{
+                float pixeisAteObstaculo = (tamanhoObstaculo/2) - extremidadeEsquerdaXBolinha;
+                float restoMargemDeErro = pixeisAteObstaculo % taxaAtualizacaoX;
+                if(restoMargemDeErro != 0){
+                    margemDeErroX -= 1;
+                    extremidadeDireitaXBolinha -= 1;
+                    extremidadeEsquerdaXBolinha = extremidadeDireitaXBolinha - 100;
+                }
+            }
+            if(taxaAtualizacaoY>=0){
+                float pixeisAteObstaculo = (-tamanhoObstaculo/2) - extremidadeSuperiorYBolinha;
+                float restoMargemDeErro = pixeisAteObstaculo % taxaAtualizacaoY;
+                if(restoMargemDeErro != 0){
+                    margemDeErroY += 1;
+                    extremidadeSuperiorYBolinha += 1;
+                    extremidadeInferiorYBolinha = extremidadeSuperiorYBolinha - 100;
+                }
+            } else {
+                float pixeisAteBarra = (tamanhoObstaculo/2) - extremidadeInferiorYBolinha;
+                float restoMargemDeErro = pixeisAteBarra % taxaAtualizacaoY;
+                if(restoMargemDeErro != 0){
+                    margemDeErroY -= 1;
+                    extremidadeInferiorYBolinha -= 1;
+                    extremidadeSuperiorYBolinha = extremidadeInferiorYBolinha + 100;
+                }
+            }
+        }
 
         if(extremidadeDireitaXBolinha >= -tamanhoObstaculo/2 && extremidadeEsquerdaXBolinha  <= tamanhoObstaculo/2){
             if (extremidadeInferiorYBolinha  <= tamanhoObstaculo/2 && extremidadeInferiorYBolinha  >= tamanhoObstaculo/2 - (tamanhoObstaculo/4) )// parte superior
@@ -160,7 +202,7 @@ public class Cena implements GLEventListener{
         }
     }
 
-        public void movimentarBarra(){
+    public void movimentarBarra(){
 
         //verifica colisao no eixo y
         if(extremidadeDireitaXBolinha >= extremidadeEsquerdaBarra && extremidadeEsquerdaXBolinha <= extremidadeDireitaBarra){
@@ -639,7 +681,6 @@ public class Cena implements GLEventListener{
 //            gl.glDisable(GL2.GL_TEXTURE_2D);
         }
     }
-
 
     public void gerarTexto(GL2 gl, int xPosicao, int yPosicao, Color cor, String texto){
         gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);

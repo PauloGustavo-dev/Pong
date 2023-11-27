@@ -20,7 +20,7 @@
 
 ### Regras do Jogo:
 - Cada rebatida o jogador recebe 50 pontos;
-- A cada 200 pontos, uma fase é adicionada, com limite em 6 fases;
+- A cada 200 pontos, uma fase é adicionada, com limite em 4 fases;
 - A partir da 2 fase, aparecerá um obstáculo no centro da tela;
 - A velocidade da bolinha e o aumento do obstáculo ocorrem a cada fase.
 
